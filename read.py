@@ -16,4 +16,5 @@ names.remove('class')
 data_noclass = np.array(data[names].tolist())
 
 # The dataset is now a matrix, and we can access the elements by row and column
-print(data_noclass[0])
+# like data_noclass[i, j])
+print(data_noclass[2, 4])
