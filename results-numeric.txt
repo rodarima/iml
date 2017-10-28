@@ -1,0 +1,16 @@
+% cat numeric-datasets.txt | xargs -L1 python2 test.py
+datasets/satimage.arff: Correct 67.86%
+datasets/waveform.arff: Correct 48.64%
+datasets/bupa.arff: Correct 54.78%
+datasets/ionosphere.arff: Correct 70.66%
+datasets/sonar.arff: Correct 52.40%
+datasets/bal.arff: Correct 52.16%
+datasets/pen-based.arff: Correct 75.89%
+datasets/grid.arff: Correct 85.06%
+datasets/glass.arff: Correct 33.18%
+datasets/pima_diabetes.arff: Correct 67.45%
+datasets/vehicle.arff: Correct 35.93%
+datasets/wine.arff: Correct 96.63%
+datasets/iris.arff: Correct 82.67%
+datasets/heart-statlog.arff: Correct 83.70%
+datasets/segment.arff: Correct 52.73%
