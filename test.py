@@ -55,17 +55,30 @@ def max_class_match(original, computed):
 	
 	return computed
 
-def do_kmeans(X, n_clusters, iterations=500):
+def do_kmeans(X, n_clusters, Xn = None, iterations=500, gamma=1.1):
 	DIST_MIN = 0.1
 	n_samples, n_features = X.shape
 	#centroids = np.zeros(n_clusters, n_features)
 	centroids = np.random.normal(size=[n_clusters, n_features])
 	y = np.zeros(n_samples, dtype=np.int)
+	if Xn != None:
+		# XXX Ugly hack here
+		centroids_nomimal = np.random.choice(Xn, n_clusters)
+		Xn = np.array([list(Xn[i]) for i in range(n_samples)])
+		n_nominals = Xn.shape[1]
 	for iter in range(iterations):
 		changes = False
 		#print(y)
 		for i in range(n_samples):
 			distances = np.linalg.norm(X[i,:] - centroids, axis=1)
+			if Xn != None:
+				distances_nominal = np.zeros(n_clusters, dtype=np.int)
+				for c in range(n_clusters):
+					for j in range(n_nominals):
+						if(Xn[i][j] != centroids_nomimal[c][j]):
+							distances_nominal[c] += 1
+				distances += gamma * distances_nominal
+
 			new_y = np.argmin(distances)
 			if(y[i] != new_y): changes = True
 			y[i] = new_y
@@ -81,6 +94,16 @@ def do_kmeans(X, n_clusters, iterations=500):
 				centroid_mean = np.mean(class_vectors, axis=0)
 				#print('centroid_mean = {}'.format(centroid_mean))
 				centroids[c] = centroid_mean
+
+				# Nominal
+				if Xn != None:
+					for j in range(n_nominals):
+						col = Xn[:,j]
+						table = np.unique(col, return_counts=True)
+						most_freq = np.argmax(table[1])
+						centroids_nomimal[c][j] = table[0][most_freq]
+					
+
 				# Check the centroid is not very close to others
 				centroid_diff = centroids[c] - centroids
 				#print('centroids {}'.format(centroids))
@@ -111,24 +134,27 @@ n_classes = len(classes)
 names = meta.names()
 names.remove(class_name)
 
-for c in meta.types()[0:-1]:
-	if c != 'numeric':
-		#print('The dataset contains non-numerical data, and is by now unsupported')
-		exit(1)
+#for c in meta.types()[0:-1]:
+#	if c != 'numeric':
+#		#print('The dataset contains non-numerical data, and is by now unsupported')
+#		exit(1)
 
 data_noclass = np.array(data[names].tolist())
 
 # shape=(n_samples, n_features)
 x = data_noclass
 
-x_scaled = scale(x)
+#x_scaled = scale(x)
+x_scaled = x
 
 if SKLEARN:
 	kmeans = KMeans(n_clusters = n_classes).fit(x_scaled)
 	y_computed = kmeans.labels_
 	centroids = kmeans.cluster_centers_
 else:
-	y_computed, centroids = do_kmeans(x_scaled, n_classes, iterations=100)
+	nominals = ['Train_or_Test', 'Speaker_Number', 'Sex']
+	x_nominal = np.array(data[nominals])
+	y_computed, centroids = do_kmeans(x_scaled, n_classes, Xn=x_nominal, iterations=100)
 
 # Match each class before computing the error
 y_computed = max_class_match(y, y_computed)
