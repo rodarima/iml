@@ -1,6 +1,6 @@
 from scipy.io import arff
 from sklearn.cluster import KMeans
-from sklearn.preprocessing import scale
+from sklearn.preprocessing import scale, Imputer
 from sklearn.metrics import confusion_matrix
 import numpy as np
 import matplotlib.pyplot as plt
@@ -55,29 +55,45 @@ def max_class_match(original, computed):
 	
 	return computed
 
-def do_kmeans(X, n_clusters, Xn = None, iterations=500, gamma=1.1):
+def extract_columns(dataset, column_list):
+	# Extract the columns as a np.array with len(column_list) columns
+	return np.array(data[column_list].tolist())
+
+def extract_columns_type(dataset, meta, column_type, exclude=[]):
+
+	col_list = np.array(meta.names())[np.array(meta.types()) == column_type]
+	col_list = list(col_list)
+
+	for e in exclude:
+		col_list.remove(e)
+
+	return extract_columns(dataset, col_list)
+
+def do_kmeans(X, n_clusters, Xn = np.array([[]]), iterations=500, gamma=1.1):
 	DIST_MIN = 0.1
+	if(X.shape[0] == 0):
+		print('{}: Zero numerical values not supported yet'.format(DATASET))
+		exit(1)
 	n_samples, n_features = X.shape
 	#centroids = np.zeros(n_clusters, n_features)
 	centroids = np.random.normal(size=[n_clusters, n_features])
 	y = np.zeros(n_samples, dtype=np.int)
-	if Xn != None:
-		# XXX Ugly hack here
-		centroids_nomimal = np.random.choice(Xn, n_clusters)
-		Xn = np.array([list(Xn[i]) for i in range(n_samples)])
-		n_nominals = Xn.shape[1]
+	if len(xn.shape) < 2: Xn = np.array([[]])
+	n_nominals = Xn.shape[1]
+	if n_nominals != 0:
+		indexes = np.random.choice(range(n_samples), n_clusters)
+		centroids_nomimal = Xn[indexes, :]
 	for iter in range(iterations):
 		changes = False
-		#print(y)
+		#print('Iteration {}/{}'.format(iter+1, iterations))
 		for i in range(n_samples):
 			distances = np.linalg.norm(X[i,:] - centroids, axis=1)
-			if Xn != None:
-				distances_nominal = np.zeros(n_clusters, dtype=np.int)
-				for c in range(n_clusters):
-					for j in range(n_nominals):
-						if(Xn[i][j] != centroids_nomimal[c][j]):
-							distances_nominal[c] += 1
-				distances += gamma * distances_nominal
+			distances_nominal = np.zeros(n_clusters, dtype=np.int)
+			for c in range(n_clusters):
+				for j in range(n_nominals):
+					if(Xn[i][j] != centroids_nomimal[c][j]):
+						distances_nominal[c] += 1
+			distances += gamma * distances_nominal
 
 			new_y = np.argmin(distances)
 			if(y[i] != new_y): changes = True
@@ -96,12 +112,11 @@ def do_kmeans(X, n_clusters, Xn = None, iterations=500, gamma=1.1):
 				centroids[c] = centroid_mean
 
 				# Nominal
-				if Xn != None:
-					for j in range(n_nominals):
-						col = Xn[:,j]
-						table = np.unique(col, return_counts=True)
-						most_freq = np.argmax(table[1])
-						centroids_nomimal[c][j] = table[0][most_freq]
+				for j in range(n_nominals):
+					col = Xn[:,j]
+					table = np.unique(col, return_counts=True)
+					most_freq = np.argmax(table[1])
+					centroids_nomimal[c][j] = table[0][most_freq]
 					
 
 				# Check the centroid is not very close to others
@@ -124,6 +139,21 @@ def do_kmeans(X, n_clusters, Xn = None, iterations=500, gamma=1.1):
 #print('Reading dataset: {}'.format(DATASET))
 data, meta = arff.loadarff(DATASET)
 
+# Remove NaN
+remove_rows = []
+keep_rows = []
+for i in range(data.shape[0]):
+	row = data[i]
+	if any([np.isnan(e) for e in row if type(e) == np.float64]):
+		remove_rows.append(i)
+	else:
+		keep_rows.append(i)
+
+
+remove_rows = np.array(remove_rows)
+data = data[keep_rows]
+
+
 class_name = meta.names()[-1]
 
 classes = meta[class_name][1]
@@ -132,6 +162,7 @@ y = np.array([classes.index(e.decode('utf-8')) for e in data[class_name]])
 n_classes = len(classes)
 
 names = meta.names()
+names = list(names)
 names.remove(class_name)
 
 #for c in meta.types()[0:-1]:
@@ -145,16 +176,20 @@ data_noclass = np.array(data[names].tolist())
 x = data_noclass
 
 #x_scaled = scale(x)
-x_scaled = x
 
 if SKLEARN:
 	kmeans = KMeans(n_clusters = n_classes).fit(x_scaled)
 	y_computed = kmeans.labels_
 	centroids = kmeans.cluster_centers_
 else:
-	nominals = ['Train_or_Test', 'Speaker_Number', 'Sex']
-	x_nominal = np.array(data[nominals])
-	y_computed, centroids = do_kmeans(x_scaled, n_classes, Xn=x_nominal, iterations=100)
+
+	xn = extract_columns_type(data, meta, 'nominal', [class_name])
+	x = extract_columns_type(data, meta, 'numeric')
+
+	# If there are no numeric don't scale
+	if(x.shape[0] != 0): x = scale(x)
+
+	y_computed, centroids = do_kmeans(x, n_classes, Xn=xn, iterations=100)
 
 # Match each class before computing the error
 y_computed = max_class_match(y, y_computed)
@@ -173,7 +208,7 @@ print("{}: Correct {:.2f}%".format(DATASET, per*100))
 
 if GRAPH:
 	cc = centroids
-	plt.scatter(x_scaled[:,0], x_scaled[:,1], c=y)
+	plt.scatter(x[:,0], x[:,1], c=y)
 	plt.plot(cc[:,0], cc[:,1], c='red', ls='None', marker='^', markersize=20)
 	plt.show()
 

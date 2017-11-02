@@ -1,0 +1,15 @@
+datasets/bal.arff
+datasets/bupa.arff
+datasets/glass.arff
+datasets/grid.arff
+datasets/heart-statlog.arff
+datasets/ionosphere.arff
+datasets/iris.arff
+datasets/pen-based.arff
+datasets/pima_diabetes.arff
+datasets/satimage.arff
+datasets/segment.arff
+datasets/sonar.arff
+datasets/vehicle.arff
+datasets/waveform.arff
+datasets/wine.arff
