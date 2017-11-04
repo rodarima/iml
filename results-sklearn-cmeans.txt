@@ -1,0 +1,16 @@
+datasets/satimage.arff: Correct 69.20%
+datasets/waveform.arff: Correct 62.58%
+datasets/bupa.arff: Correct 51.30%
+datasets/ionosphere.arff: Correct 70.09%
+datasets/sonar.arff: Correct 55.77%
+datasets/bal.arff: Correct 48.96%
+datasets/pen-based.arff: Correct 37.80%
+datasets/grid.arff: Correct 63.77%
+datasets/glass.arff: Correct 34.58%
+datasets/pima_diabetes.arff: Correct 71.35%
+datasets/vehicle.arff: Correct 37.00%
+datasets/wine.arff: Correct 96.63%
+datasets/iris.arff: Correct 84.00%
+datasets/heart-statlog.arff: Correct 79.63%
+datasets/segment.arff: Correct 65.63%
+

@@ -2,6 +2,7 @@ from scipy.io import arff
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import scale, Imputer
 from sklearn.metrics import confusion_matrix
+from skfuzzy.cluster import cmeans
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
@@ -19,6 +20,7 @@ GRAPH = False
 PRINT_CLASSES = False
 CONFUSION = False
 SKLEARN = False
+CMEANS = False
 
 def max_class_match(original, computed):
 	# Compute the best names of the classes to match 'original'
@@ -134,7 +136,56 @@ def do_kmeans(X, n_clusters, Xn = np.array([[]]), iterations=500, gamma=1.1):
 				centroids[c] = np.random.normal(size=n_features)
 		
 	return (y, centroids)
-		
+
+def do_fuzzyCMeans(X, n_clusters, fuzzyness, iterations=100, t_threshold=0.01):
+	
+	if X.shape[0] == 0 :
+		print('{}: Zero numerical values not supported yet'.format(DATASET))
+		exit(1)
+	n_samples, n_features = X.shape
+	m = fuzzyness
+
+	#centroids = np.random.normal(size=[n_clusters, n_features])
+	centroids = np.random.normal(size=[n_clusters, n_features])
+	#membership_matrix = np.zeros((n_samples, n_clusters))
+	membership_matrix = np.zeros((n_clusters, n_samples))
+	centroid_matrix = []
+
+	power = 20
+	if m > 1:
+		power = 2 / (m - 1)
+
+	for t in range(iterations):
+		#we compute the membership matrix
+		for i in range(n_clusters):
+			for k in range(n_samples):
+				v_sum = 0
+				numerator = np.linalg.norm(X[k] - centroids[i])
+				for j in range(n_clusters):
+					denominator = np.linalg.norm(X[k] - centroids[j])
+					v_sum = v_sum+np.power((numerator/denominator), power)
+				membership_matrix[i,k] = 1/v_sum
+
+		#we compute associated cluster centers
+		for i in range(n_clusters):
+			numerator_sum = 0
+			denominator_sum = 0
+			for k in range (n_samples):
+				numerator_sum = numerator_sum + (np.power(membership_matrix[i,k], m)*X[k])
+				denominator_sum = denominator_sum + np.power(membership_matrix[i,k], m)
+			centroids[i] = numerator_sum/denominator_sum
+
+		centroid_matrix.append(np.copy(centroids))
+		#we calculate termination measure and check if it is lower than termination threshold
+		if t > 0:
+			t_measure = np.linalg.norm(centroid_matrix[t] - centroid_matrix[t-1])
+			if t_measure <= t_threshold:
+				break
+
+	#we get the centroid membership of each sample			
+	y = np.argmax(membership_matrix, axis=0)
+
+	return y, centroid_matrix[-1]
 
 #print('Reading dataset: {}'.format(DATASET))
 data, meta = arff.loadarff(DATASET)
@@ -178,9 +229,15 @@ x = data_noclass
 #x_scaled = scale(x)
 
 if SKLEARN:
-	kmeans = KMeans(n_clusters = n_classes).fit(x_scaled)
-	y_computed = kmeans.labels_
-	centroids = kmeans.cluster_centers_
+	x_scaled = scale(x)
+	if CMEANS: 
+		cntr, u, u0, d, jm, p, fpc = cmeans(x_scaled.T, n_classes, 2, 0.01, 500)
+		y_computed = np.argmax(u, axis=0)
+		centroids = cntr
+	else: 
+		kmeans = KMeans(n_clusters = n_classes).fit(x_scaled)
+		y_computed = kmeans.labels_
+		centroids = kmeans.cluster_centers_
 else:
 
 	xn = extract_columns_type(data, meta, 'nominal', [class_name])
@@ -188,8 +245,11 @@ else:
 
 	# If there are no numeric don't scale
 	if(x.shape[0] != 0): x = scale(x)
+	if CMEANS: 
+		y_computed, centroids = do_fuzzyCMeans(x, n_classes, 2)
+	else: 
+		y_computed, centroids = do_kmeans(x, n_classes, Xn=xn, iterations=100)
 
-	y_computed, centroids = do_kmeans(x, n_classes, Xn=xn, iterations=100)
 
 # Match each class before computing the error
 y_computed = max_class_match(y, y_computed)
@@ -204,7 +264,6 @@ if PRINT_CLASSES:
 per = sum(y==y_computed) / float(y.shape[0])
 
 print("{}: Correct {:.2f}%".format(DATASET, per*100))
-
 
 if GRAPH:
 	cc = centroids
