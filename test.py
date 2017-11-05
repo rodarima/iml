@@ -8,6 +8,7 @@ from sklearn.metrics import f1_score
 from skfuzzy.cluster import cmeans
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 import sys
 
 #np.random.seed(0)
@@ -19,7 +20,7 @@ if len(sys.argv) != 2:
 
 #DATASET = "datasets/wine.arff"
 DATASET = sys.argv[1]
-GRAPH = False
+GRAPH = True
 PRINT_CLASSES = False
 EVALUATION = True
 SKLEARN = False
@@ -140,7 +141,7 @@ def do_kmeans(X, n_clusters, Xn = np.array([[]]), iterations=500, gamma=1.1):
 		
 	return (y, centroids)
 
-def do_fuzzyCMeans(X, n_clusters, fuzzyness, iterations=100, t_threshold=0.01):
+def do_fuzzyCMeans(X, c, fuzzyness, iterations=100, t_threshold=0.01):
 	
 	if X.shape[0] == 0 :
 		print('{}: Zero numerical values not supported yet'.format(DATASET))
@@ -148,8 +149,8 @@ def do_fuzzyCMeans(X, n_clusters, fuzzyness, iterations=100, t_threshold=0.01):
 	n_samples, n_features = X.shape
 	m = fuzzyness
 
-	centroids = np.random.normal(size=[n_clusters, n_features])
-	membership_matrix = np.zeros((n_clusters, n_samples))
+	centroids = np.random.normal(size=[c, n_features])
+	membership_matrix = np.zeros((c, n_samples))
 	centroid_matrix = []
 
 	power = 20
@@ -159,17 +160,17 @@ def do_fuzzyCMeans(X, n_clusters, fuzzyness, iterations=100, t_threshold=0.01):
 	for t in range(iterations):
 
 		#we compute the membership matrix
-		for i in range(n_clusters):
+		for i in range(c):
 			for k in range(n_samples):
 				v_sum = 0
 				numerator = np.linalg.norm(X[k] - centroids[i])
-				for j in range(n_clusters):
+				for j in range(c):
 					denominator = np.linalg.norm(X[k] - centroids[j])
 					v_sum = v_sum+np.power((numerator/denominator), power)
 				membership_matrix[i,k] = 1/v_sum
 
 		#we compute associated cluster centers
-		for i in range(n_clusters):
+		for i in range(c):
 			numerator_sum = 0
 			denominator_sum = 0
 			for k in range (n_samples):
@@ -247,8 +248,9 @@ else:
 
 	# If there are no numeric don't scale
 	if(x.shape[0] != 0): x = scale(x)
-
+	#time1 = time.clock()
 	y_computed_cmeans, centroids_cmeans = do_fuzzyCMeans(x, n_classes, 2)
+	#time2 = time.clock()
 	y_computed, centroids = do_kmeans(x, n_classes, Xn=xn, iterations=100)
 
 
@@ -276,6 +278,7 @@ if GRAPH:
 	plt.show()
 
 if EVALUATION:
+	#print("CMeans function took %0.3f ms" % ((time2-time1)*1000.0))
 	print("Confusion matrix")
 	print("K-means")
 	print(confusion_matrix(y, y_computed))
