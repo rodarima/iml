@@ -2,7 +2,6 @@ from scipy.io import arff
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import scale, Imputer
 from sklearn.metrics import confusion_matrix
-from skfuzzy.cluster import cmeans
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
@@ -21,6 +20,9 @@ PRINT_CLASSES = False
 CONFUSION = False
 SKLEARN = False
 CMEANS = False
+KHMEANS = True
+
+if CMEANS: from skfuzzy.cluster import cmeans
 
 def max_class_match(original, computed):
 	# Compute the best names of the classes to match 'original'
@@ -70,6 +72,117 @@ def extract_columns_type(dataset, meta, column_type, exclude=[]):
 		col_list.remove(e)
 
 	return extract_columns(dataset, col_list)
+
+def do_khmeans(X, n_clusters, Xn = np.array([[]]), iterations=500, gamma=1.1):
+	DIST_MIN = 0.1
+	NPERF = 10
+	if(X.shape[0] == 0):
+		print('{}: Zero numerical values not supported yet'.format(DATASET))
+		exit(1)
+	n_samples, n_features = X.shape
+	#centroids = np.zeros(n_clusters, n_features)
+	centroids = np.random.normal(size=[n_clusters, n_features])
+	y = np.zeros(n_samples, dtype=np.int)
+	if len(xn.shape) < 2: Xn = np.array([[]])
+	n_nominals = Xn.shape[1]
+	dist = np.zeros([n_samples, n_clusters])
+	perfdiff_v = np.zeros(NPERF)
+	perf = 0
+	for i in range(NPERF):
+ 		perfdiff_v[i] = float('inf')
+	if n_nominals != 0:
+		indexes = np.random.choice(range(n_samples), n_clusters)
+		centroids_nomimal = Xn[indexes, :]
+	for iter in range(iterations):
+		changes = False
+		#print('Iteration {}/{}'.format(iter+1, iterations))
+		# Compute the best class for each point
+		for i in range(n_samples):
+			distances = np.linalg.norm(X[i,:] - centroids, axis=1)
+			distances_nominal = np.zeros(n_clusters, dtype=np.int)
+			for c in range(n_clusters):
+				for j in range(n_nominals):
+					if(Xn[i][j] != centroids_nomimal[c][j]):
+						distances_nominal[c] += 1
+			distances += gamma * distances_nominal
+			dist[i,:] = distances
+
+			new_y = np.argmin(distances)
+			if(y[i] != new_y): changes = True
+			y[i] = new_y
+	
+
+		perf_new = np.sum(dist)
+		perf_diff = np.abs(perf_new - perf)
+		perf = perf_new
+		for i in range(perfdiff_v.shape[0] - 1):
+			perfdiff_v[i] = perfdiff_v[i+1]
+		
+		perfdiff_v[NPERF-1] = perf_diff
+		perf_mean = np.mean(perfdiff_v)
+			
+		#print('Perf diff mean = {}'.format(perf_mean))
+
+		if perf_mean < 10: break
+		#if not changes: break
+		#print('centroids {}'.format(centroids))
+		#print(dist)
+
+		alpha = np.zeros(n_samples)
+		q = np.zeros([n_samples, n_clusters])
+		p = np.zeros([n_samples, n_clusters])
+		qq = np.zeros([n_samples])
+		for i in range(n_samples):
+			alpha[i] = 1/np.sum(1/dist[i,:] ** 2)**2
+			q[i] = alpha[i] / dist[i,:] ** 3
+		qq = np.sum(q, axis=1)
+		for i in range(n_samples):
+			p[i,:] = q[i,:]/qq[i]
+
+		for c in range(n_clusters):
+			class_vectors = X[y == c]
+			#print('class_vectors.shape = {}'.format(class_vectors.shape))
+			#print('Number of samples for class {} is {}'.format(c, class_vectors.shape[0]))
+			if class_vectors.shape[0] != 0:
+				
+
+				centroid_mean = np.mean(class_vectors, axis=0)
+				#print('centroid_mean = {}'.format(centroid_mean))
+
+				cc = np.zeros([n_features])
+				for i in range(n_samples):
+					assert(np.sum(p[i,:]) < 1+1e-5)
+					assert(np.sum(p[i,:]) > 1-1e-5)
+					assert(p[i,c] < 1+1e-5)
+					cc += p[i,c]*X[i,:]
+				#print('OLD centroid[{}] = {}'.format(c, centroids[c]))
+				centroids[c] = cc
+				#print('NEW centroid[{}] = {}'.format(c, cc))
+
+				# Nominal
+				for j in range(n_nominals):
+					col = Xn[:,j]
+					table = np.unique(col, return_counts=True)
+					most_freq = np.argmax(table[1])
+					centroids_nomimal[c][j] = table[0][most_freq]
+					
+
+				# Check the centroid is not very close to others
+				centroid_diff = centroids[c] - centroids
+				#print('centroids {}'.format(centroids))
+				#print('For {} centroid_diff = {}'.format(c, centroid_diff))
+				centroid_dist = np.linalg.norm(centroid_diff, axis=1)
+				centroid_dist[c] = float('infinity')
+				#print('For {} centroid_dist = {}'.format(c, centroid_dist))
+				if(np.min(centroid_dist) < DIST_MIN):
+					centroids[c] = np.random.normal(size=n_features)
+					#print('Centroid {} is reallocated'.format(c))
+			else:
+				pass
+	#			print('Centroid {} is reallocated because the number of samples = 0'.format(c))
+	#			centroids[c] = np.random.normal(size=n_features)
+		
+	return (y, centroids)
 
 def do_kmeans(X, n_clusters, Xn = np.array([[]]), iterations=500, gamma=1.1):
 	DIST_MIN = 0.1
@@ -234,6 +347,9 @@ if SKLEARN:
 		cntr, u, u0, d, jm, p, fpc = cmeans(x_scaled.T, n_classes, 2, 0.01, 500)
 		y_computed = np.argmax(u, axis=0)
 		centroids = cntr
+	elif KHMEANS:
+		print('Not supported')
+		exit(1)
 	else: 
 		kmeans = KMeans(n_clusters = n_classes).fit(x_scaled)
 		y_computed = kmeans.labels_
@@ -247,6 +363,8 @@ else:
 	if(x.shape[0] != 0): x = scale(x)
 	if CMEANS: 
 		y_computed, centroids = do_fuzzyCMeans(x, n_classes, 2)
+	elif KHMEANS:
+		y_computed, centroids = do_khmeans(x, n_classes, Xn=xn, iterations=100)
 	else: 
 		y_computed, centroids = do_kmeans(x, n_classes, Xn=xn, iterations=100)
 
