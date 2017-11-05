@@ -2,6 +2,9 @@ from scipy.io import arff
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import scale, Imputer
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import adjusted_rand_score
+from sklearn.metrics import completeness_score
+from sklearn.metrics import f1_score
 from skfuzzy.cluster import cmeans
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,9 +21,9 @@ if len(sys.argv) != 2:
 DATASET = sys.argv[1]
 GRAPH = False
 PRINT_CLASSES = False
-CONFUSION = False
+EVALUATION = True
 SKLEARN = False
-CMEANS = False
+#CMEANS = True
 
 def max_class_match(original, computed):
 	# Compute the best names of the classes to match 'original'
@@ -145,9 +148,7 @@ def do_fuzzyCMeans(X, n_clusters, fuzzyness, iterations=100, t_threshold=0.01):
 	n_samples, n_features = X.shape
 	m = fuzzyness
 
-	#centroids = np.random.normal(size=[n_clusters, n_features])
 	centroids = np.random.normal(size=[n_clusters, n_features])
-	#membership_matrix = np.zeros((n_samples, n_clusters))
 	membership_matrix = np.zeros((n_clusters, n_samples))
 	centroid_matrix = []
 
@@ -156,6 +157,7 @@ def do_fuzzyCMeans(X, n_clusters, fuzzyness, iterations=100, t_threshold=0.01):
 		power = 2 / (m - 1)
 
 	for t in range(iterations):
+
 		#we compute the membership matrix
 		for i in range(n_clusters):
 			for k in range(n_samples):
@@ -245,14 +247,14 @@ else:
 
 	# If there are no numeric don't scale
 	if(x.shape[0] != 0): x = scale(x)
-	if CMEANS: 
-		y_computed, centroids = do_fuzzyCMeans(x, n_classes, 2)
-	else: 
-		y_computed, centroids = do_kmeans(x, n_classes, Xn=xn, iterations=100)
+
+	y_computed_cmeans, centroids_cmeans = do_fuzzyCMeans(x, n_classes, 2)
+	y_computed, centroids = do_kmeans(x, n_classes, Xn=xn, iterations=100)
 
 
 # Match each class before computing the error
 y_computed = max_class_match(y, y_computed)
+y_computed_cmeans = max_class_match(y, y_computed_cmeans)
 
 if PRINT_CLASSES:
 	print("Original classes")
@@ -262,8 +264,10 @@ if PRINT_CLASSES:
 
 # Compute the error
 per = sum(y==y_computed) / float(y.shape[0])
+per_cmeans = sum(y==y_computed_cmeans) / float(y.shape[0])
 
-print("{}: Correct {:.2f}%".format(DATASET, per*100))
+print("{}: Kmeans Correct {:.2f}%".format(DATASET, per*100))
+print("{}: Cmeans Correct {:.2f}%".format(DATASET, per_cmeans*100))
 
 if GRAPH:
 	cc = centroids
@@ -271,5 +275,22 @@ if GRAPH:
 	plt.plot(cc[:,0], cc[:,1], c='red', ls='None', marker='^', markersize=20)
 	plt.show()
 
-if CONFUSION:
+if EVALUATION:
+	print("Confusion matrix")
+	print("K-means")
 	print(confusion_matrix(y, y_computed))
+	print("C-means")
+	print(confusion_matrix(y, y_computed_cmeans))
+
+	print("Adjusted rand index:")
+	print("K-means")
+	print(adjusted_rand_score(y, y_computed))
+	print("C-means")
+	print(adjusted_rand_score(y, y_computed_cmeans))
+
+
+	print("Davies-Bouldin:")
+	print("K-means")
+	print(completeness_score(y, y_computed))
+	print("C-means")
+	print(completeness_score(y, y_computed_cmeans))
