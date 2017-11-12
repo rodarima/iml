@@ -1,0 +1,31 @@
+datasets/audiology.arff: Zero numerical values not supported yet
+datasets/autos.arff: Correct 30.00%
+datasets/bal.arff: Correct 46.08%
+datasets/breast-w.arff: Correct 96.63%
+datasets/bupa.arff: Correct 52.17%
+datasets/cmc.arff: Correct 42.70%
+datasets/colic.arff: Correct 52.38%
+datasets/connect-4.arff: Zero numerical values not supported yet
+datasets/credit-a.arff: Correct 69.82%
+datasets/glass.arff: Correct 35.51%
+datasets/grid.arff: Correct 83.79%
+datasets/heart-c.arff: Correct 0.00%
+datasets/heart-h.arff: Correct 50.00%
+datasets/heart-statlog.arff: Correct 79.63%
+datasets/hepatitis.arff: Correct 69.88%
+datasets/hypothyroid.arff: Zero numerical values not supported yet
+datasets/ionosphere.arff: Correct 70.09%
+datasets/iris.arff: Correct 33.33%
+datasets/kropt.arff: Zero numerical values not supported yet
+datasets/kr-vs-kp.arff: Zero numerical values not supported yet
+datasets/nursery.arff: Zero numerical values not supported yet
+datasets/pima_diabetes.arff: Correct 66.93%
+datasets/primary-tumor.arff: Zero numerical values not supported yet
+datasets/satimage.arff: Correct 23.82%
+datasets/segment.arff: Correct 14.29%
+datasets/sonar.arff: Correct 53.37%
+datasets/soybean.arff: Zero numerical values not supported yet
+datasets/splice.arff: Zero numerical values not supported yet
+datasets/vehicle.arff: Correct 25.77%
+datasets/vote.arff: Zero numerical values not supported yet
+datasets/vowel.arff: Correct 9.09%
