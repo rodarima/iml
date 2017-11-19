@@ -5,6 +5,7 @@ from scipy.io import arff
 #from sklearn.metrics import adjusted_rand_score
 #from sklearn.metrics import completeness_score
 #from sklearn.metrics import f1_score
+from sklearn.decomposition import PCA as skPCA
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
@@ -22,7 +23,7 @@ if len(sys.argv) != 2:
 
 #DATASET = "datasets/wine.arff"
 DATASET = sys.argv[1]
-GRAPH = False
+GRAPH = True
 
 bn = os.path.basename(DATASET)
 img_fn = bn.replace('.arff', '.png')
@@ -93,10 +94,19 @@ def PCA(Xs):
 
 	Yk = np.dot(Xs, Zk)
 
-	return Yk
+	return Yk,keival
 
-Yk = PCA(Xs)
-Yks = PCA(Xss)
+#Yk, keival1 = PCA(Xs)
+Yks, keival = PCA(Xss)
+
+skpca = skPCA(keival.shape[0])
+skpca.fit(Xss)
+res = skpca.explained_variance_
+skYk = skpca.transform(Xss)
+
+dist = round(np.linalg.norm(keival-res))
+
+print("Distance between our eigenvalues and SKlearn: {}".format(dist))
 
 # Set the color map to match the number of species
 hot = plt.get_cmap('jet')
@@ -107,16 +117,28 @@ scalarMap = cmx.ScalarMappable(norm=cNorm, cmap=hot)
 fig = plt.figure(figsize=(15, 10))
 
 ax = fig.add_subplot(231)
-ax.set_title('Without std scaling. Axis 0 and 1')
-ax.scatter(Yk[:,0], Yk[:,1], c=scalarMap.to_rgba(y))
+ax.set_title('SKlearn. Axis 0 and 1')
+ax.scatter(skYk[:,0], skYk[:,1], c=scalarMap.to_rgba(y))
 
 ax = fig.add_subplot(232)
-ax.set_title('Without std scaling. Axis 1 and 2')
-ax.scatter(Yk[:,1], Yk[:,2], c=scalarMap.to_rgba(y))
+ax.set_title('SKlearn. Axis 1 and 2')
+ax.scatter(skYk[:,1], skYk[:,2], c=scalarMap.to_rgba(y))
 
 ax = fig.add_subplot(233)
-ax.set_title('Without std scaling. Axis 0 and 2')
-ax.scatter(Yk[:,0], Yk[:,2], c=scalarMap.to_rgba(y))
+ax.set_title('SKlearn. Axis 0 and 2')
+ax.scatter(skYk[:,0], skYk[:,2], c=scalarMap.to_rgba(y))
+
+#ax = fig.add_subplot(334)
+#ax.set_title('Without std scaling. Axis 0 and 1')
+#ax.scatter(Yk[:,0], Yk[:,1], c=scalarMap.to_rgba(y))
+
+#ax = fig.add_subplot(335)
+#ax.set_title('Without std scaling. Axis 1 and 2')
+#ax.scatter(Yk[:,1], Yk[:,2], c=scalarMap.to_rgba(y))
+
+#ax = fig.add_subplot(336)
+#ax.set_title('Without std scaling. Axis 0 and 2')
+#ax.scatter(Yk[:,0], Yk[:,2], c=scalarMap.to_rgba(y))
 
 ax = fig.add_subplot(234)
 ax.set_title('With std scaling. Axis 0 and 1')
