@@ -1,0 +1,25 @@
+% cat datasets-pca.txt | xargs -L1 python pca.py
+data/adult.arff:  k/n = 5/6. Mean rel error cov=0.14460700499305743, corr=0.19092430746236175
+data/autos.arff:  k/n = 5/15. Mean rel error cov=0.09066812505842839, corr=0.0612209539274369
+data/bal.arff:  k/n = 3/4. Mean rel error cov=0.10660035817780522, corr=0.1894405601558276
+data/breast-w.arff:  k/n = 5/9. Mean rel error cov=0.25352635564745746, corr=0.20263101834083966
+data/bupa.arff:  k/n = 4/6. Mean rel error cov=0.16328654373499446, corr=0.16349344743950112
+data/cmc.arff:  k/n = 2/2. Mean rel error cov=5.648853296074466e-17, corr=6.482102678631783e-17
+data/colic.arff:  k/n = 4/7. Mean rel error cov=0.12435976598983142, corr=0.13799447640384194
+data/credit-a.arff:  k/n = 4/6. Mean rel error cov=0.38437786856303185, corr=0.3132993630096882
+data/glass.arff:  k/n = 5/9. Mean rel error cov=0.28499691225385043, corr=0.1387589122750099
+data/grid.arff:  k/n = 2/2. Mean rel error cov=0.0, corr=0.06237828615518059
+data/heart-c.arff:  k/n = 4/6. Mean rel error cov=0.267399764134109, corr=0.16806931593239008
+data/heart-statlog.arff:  k/n = 9/13. Mean rel error cov=0.42058982741858064, corr=0.16377731898221912
+data/hepatitis.arff:  k/n = 4/6. Mean rel error cov=0.15419234622429523, corr=0.16387966666312107
+data/ionosphere.arff:  k/n = 18/34. Mean rel error cov=nan, corr=nan
+data/iris.arff:  k/n = 3/4. Mean rel error cov=0.030811395468263558, corr=0.024190525421926394
+data/pen-based.arff:  k/n = 7/16. Mean rel error cov=0.1750277008074313, corr=0.17263609024792353
+data/pima_diabetes.arff:  k/n = 6/8. Mean rel error cov=0.2869249682597961, corr=0.1438983967154046
+data/satimage.arff:  k/n = 3/36. Mean rel error cov=0.11409705592056849, corr=0.11402888434931319
+data/segment.arff:  k/n = 7/19. Mean rel error cov=0.39867714489891215, corr=0.1995916771159686
+data/sonar.arff:  k/n = 21/60. Mean rel error cov=0.27764914412837366, corr=0.16542068761518577
+data/vehicle.arff:  k/n = 4/18. Mean rel error cov=0.11328412350707305, corr=0.08978218497407278
+data/vowel.arff:  k/n = 6/10. Mean rel error cov=0.3521884559918524, corr=0.2876208396971473
+data/waveform.arff:  k/n = 28/40. Mean rel error cov=0.3072704542811079, corr=0.1374386218344101
+data/wine.arff:  k/n = 7/13. Mean rel error cov=0.1965838747780205, corr=0.08450812095338481
