@@ -27,7 +27,7 @@ GRAPH = True
 
 bn = os.path.basename(DATASET)
 img_fn = bn.replace('.arff', '.png')
-img_path = 'fig/' + img_fn
+img_path = 'fig/correlation-' + img_fn
 
 #print('Reading dataset: {}'.format(DATASET))
 data, meta = arff.loadarff(DATASET)
@@ -96,7 +96,7 @@ def PCA(Xs):
 
 	return Yk,keival
 
-#Yk, keival1 = PCA(Xs)
+Yk, keival1 = PCA(Xs)
 Yks, keival = PCA(Xss)
 
 skpca = skPCA(keival.shape[0])
@@ -117,28 +117,16 @@ scalarMap = cmx.ScalarMappable(norm=cNorm, cmap=hot)
 fig = plt.figure(figsize=(15, 10))
 
 ax = fig.add_subplot(231)
-ax.set_title('SKlearn. Axis 0 and 1')
-ax.scatter(skYk[:,0], skYk[:,1], c=scalarMap.to_rgba(y))
+ax.set_title('Without std scaling. Axis 0 and 1')
+ax.scatter(Yk[:,0], Yk[:,1], c=scalarMap.to_rgba(y))
 
 ax = fig.add_subplot(232)
-ax.set_title('SKlearn. Axis 1 and 2')
-ax.scatter(skYk[:,1], skYk[:,2], c=scalarMap.to_rgba(y))
+ax.set_title('Without std scaling. Axis 1 and 2')
+ax.scatter(Yk[:,1], Yk[:,2], c=scalarMap.to_rgba(y))
 
 ax = fig.add_subplot(233)
-ax.set_title('SKlearn. Axis 0 and 2')
-ax.scatter(skYk[:,0], skYk[:,2], c=scalarMap.to_rgba(y))
-
-#ax = fig.add_subplot(334)
-#ax.set_title('Without std scaling. Axis 0 and 1')
-#ax.scatter(Yk[:,0], Yk[:,1], c=scalarMap.to_rgba(y))
-
-#ax = fig.add_subplot(335)
-#ax.set_title('Without std scaling. Axis 1 and 2')
-#ax.scatter(Yk[:,1], Yk[:,2], c=scalarMap.to_rgba(y))
-
-#ax = fig.add_subplot(336)
-#ax.set_title('Without std scaling. Axis 0 and 2')
-#ax.scatter(Yk[:,0], Yk[:,2], c=scalarMap.to_rgba(y))
+ax.set_title('Without std scaling. Axis 0 and 2')
+ax.scatter(Yk[:,0], Yk[:,2], c=scalarMap.to_rgba(y))
 
 ax = fig.add_subplot(234)
 ax.set_title('With std scaling. Axis 0 and 1')
