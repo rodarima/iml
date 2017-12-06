@@ -1,0 +1,15 @@
+../data/satimage.arff
+../data/waveform.arff
+../data/bupa.arff
+../data/ionosphere.arff
+../data/sonar.arff
+../data/bal.arff
+../data/pen-based.arff
+../data/grid.arff
+../data/glass.arff
+../data/pima_diabetes.arff
+../data/vehicle.arff
+../data/wine.arff
+../data/iris.arff
+../data/heart-statlog.arff
+../data/segment.arff

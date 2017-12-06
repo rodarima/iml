@@ -1,0 +1,81 @@
+%
+% GALE automatic stratified fold generation for CV
+%
+% Generated at        : Thu Feb 22 00:02:10 CET 2001
+% Random seed         : 69
+% File name           : GALE.labor.cv.seed.69.fold.000009.train.arff
+% Number of instances : 51
+%
+
+@RELATION labor
+
+@ATTRIBUTE	'duration'	REAL
+@ATTRIBUTE	'wage-increase-first-year'	REAL
+@ATTRIBUTE	'wage-increase-second-year'	REAL
+@ATTRIBUTE	'wage-increase-third-year'	REAL
+@ATTRIBUTE	'cost-of-living-adjustment'	{'none','tcf','tc'}
+@ATTRIBUTE	'working-hours'	REAL
+@ATTRIBUTE	'pension'	{'none','ret_allw','empl_contr'}
+@ATTRIBUTE	'standby-pay'	REAL
+@ATTRIBUTE	'shift-differential'	REAL
+@ATTRIBUTE	'education-allowance'	{'yes','no'}
+@ATTRIBUTE	'statutory-holidays'	REAL
+@ATTRIBUTE	'vacation'	{'below_average','average','generous'}
+@ATTRIBUTE	'longterm-disability-assistance'	{'yes','no'}
+@ATTRIBUTE	'contribution-to-dental-plan'	{'none','half','full'}
+@ATTRIBUTE	'bereavement-assistance'	{'yes','no'}
+@ATTRIBUTE	'contribution-to-health-plan'	{'none','half','full'}
+@ATTRIBUTE	'class'	{'bad','good'}
+
+@DATA
+2.0,4.6,4.6,?,'tcf',38.0,?,?,?,?,?,?,'yes','half',?,'half','good'
+1.0,5.0,?,?,?,40.0,?,?,2.0,?,11.0,'average',?,?,'yes',?,'good'
+1.0,2.0,?,?,'none',38.0,'none',?,?,'yes',11.0,'average','no','none','no','none','bad'
+3.0,5.0,4.4,?,'none',38.0,'empl_contr',10.0,6.0,?,11.0,'generous','yes',?,?,'full','good'
+3.0,4.0,5.0,5.0,'tc',?,'empl_contr',?,?,?,12.0,'generous','yes','none','yes','half','good'
+2.0,2.0,2.5,?,?,35.0,?,?,6.0,'yes',12.0,'average',?,?,?,?,'good'
+1.0,6.0,?,?,?,38.0,?,8.0,3.0,?,9.0,'generous',?,?,?,?,'good'
+3.0,2.0,2.5,?,?,35.0,'none',?,?,?,10.0,'average',?,?,'yes','full','bad'
+2.0,4.5,4.0,?,?,40.0,?,?,4.0,?,10.0,'generous',?,'half',?,'full','good'
+2.0,4.0,5.0,?,'none',40.0,'none',?,3.0,'no',10.0,'below_average','no','none',?,'none','bad'
+1.0,2.8,?,?,?,35.0,?,?,2.0,?,12.0,'below_average',?,?,?,?,'good'
+3.0,2.0,2.5,2.0,?,37.0,'empl_contr',?,?,?,10.0,'average',?,?,'yes','none','bad'
+2.0,3.0,7.0,?,?,38.0,?,12.0,25.0,'yes',11.0,'below_average','yes','half','yes',?,'good'
+2.0,2.5,3.0,?,'tcf',40.0,'none',?,?,?,11.0,'below_average',?,?,'yes',?,'bad'
+2.0,4.5,4.5,?,'tcf',?,?,?,?,'yes',10.0,'below_average','yes','none',?,'half','good'
+3.0,6.9,4.8,2.3,?,40.0,?,?,3.0,?,12.0,'below_average',?,?,?,?,'good'
+3.0,3.7,4.0,5.0,'tc',?,?,?,?,'yes',?,?,?,?,'yes',?,'good'
+3.0,2.0,2.0,2.0,'none',40.0,'none',?,?,?,10.0,'below_average',?,'half','yes','full','bad'
+2.0,2.5,2.5,?,?,38.0,'empl_contr',?,?,?,10.0,'average',?,?,?,?,'bad'
+3.0,3.5,4.0,4.6,'none',36.0,?,?,3.0,?,13.0,'generous',?,?,'yes','full','good'
+3.0,3.5,4.0,5.1,'tcf',37.0,?,?,4.0,?,13.0,'generous',?,'full','yes','full','good'
+1.0,2.8,?,?,'none',38.0,'empl_contr',2.0,3.0,'no',9.0,'below_average','yes','half',?,'none','bad'
+2.0,6.4,6.4,?,?,38.0,?,?,4.0,?,15.0,?,?,'full',?,?,'good'
+3.0,3.0,2.0,2.5,'tc',40.0,'none',?,5.0,'no',10.0,'below_average','yes','half','yes','full','bad'
+2.0,5.7,4.5,?,'none',40.0,'ret_allw',?,?,?,11.0,'average','yes','full','yes','full','good'
+2.0,4.5,5.8,?,?,35.0,'ret_allw',?,?,'yes',11.0,'below_average',?,'full',?,'full','good'
+2.0,2.0,3.0,?,'none',38.0,'empl_contr',?,?,'yes',12.0,'generous','yes','none','yes','full','bad'
+2.0,4.5,4.0,?,'none',37.0,'empl_contr',?,?,?,11.0,'average',?,'full','yes',?,'good'
+1.0,4.0,?,?,'none',?,'none',?,?,'yes',11.0,'average','no','none','no','none','bad'
+2.0,4.3,4.4,?,?,38.0,?,?,4.0,?,12.0,'generous',?,'full',?,'full','good'
+3.0,3.5,4.0,4.6,'tcf',27.0,?,?,?,?,?,?,?,?,?,?,'good'
+2.0,4.0,4.0,?,'none',40.0,'none',?,3.0,?,10.0,'below_average','no','none',?,'none','bad'
+3.0,5.0,5.0,5.0,?,40.0,?,?,?,?,12.0,'average',?,'half','yes','half','good'
+2.0,2.5,2.5,?,'tc',39.0,'empl_contr',?,?,?,12.0,'average',?,?,'yes',?,'bad'
+2.0,7.0,5.3,?,?,?,?,?,?,?,11.0,?,'yes','full',?,?,'good'
+3.0,4.5,4.5,5.0,?,40.0,?,?,?,?,12.0,'average',?,'half','yes','half','good'
+2.0,5.0,4.0,?,'none',37.0,?,?,5.0,'no',11.0,'below_average','yes','full','yes','full','good'
+3.0,6.0,6.0,4.0,?,35.0,?,?,14.0,?,9.0,'generous','yes','full','yes','full','good'
+2.0,4.5,4.0,?,?,40.0,?,?,2.0,'no',10.0,'below_average','no','half',?,'half','bad'
+2.0,3.5,4.0,?,'none',40.0,?,?,2.0,'no',10.0,'below_average','no','half',?,'half','bad'
+1.0,5.7,?,?,'none',40.0,'empl_contr',?,4.0,?,11.0,'generous','yes','full',?,?,'good'
+1.0,2.1,?,?,'tc',40.0,'ret_allw',2.0,3.0,'no',9.0,'below_average','yes','half',?,'none','bad'
+2.0,4.5,4.0,?,'none',40.0,?,?,5.0,?,11.0,'average',?,'full','yes','full','good'
+3.0,4.5,4.5,5.0,'none',40.0,?,?,?,'no',11.0,'average',?,'half',?,?,'good'
+3.0,3.5,4.0,4.5,'tcf',35.0,?,?,?,?,13.0,'generous',?,?,'yes','full','good'
+2.0,3.0,3.0,?,'none',33.0,?,?,?,'yes',12.0,'generous',?,?,'yes','full','good'
+2.0,2.0,2.0,?,'none',40.0,'none',?,?,'no',11.0,'average','yes','none','yes','full','bad'
+2.0,4.5,4.0,?,'none',40.0,?,?,4.0,?,12.0,'average','yes','full','yes','half','good'
+3.0,2.0,2.5,2.1,'tc',40.0,'none',2.0,1.0,'no',10.0,'below_average','no','half','yes','full','bad'
+2.0,2.5,3.0,?,?,40.0,'none',?,?,?,11.0,'below_average',?,?,?,?,'bad'
+1.0,3.0,?,?,'none',36.0,?,?,10.0,'no',11.0,'generous',?,?,?,?,'good'

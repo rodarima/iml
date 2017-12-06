@@ -1,0 +1,49 @@
+%
+% GALE automatic stratified fold generation for CV
+%
+% Generated at        : Wed Feb 21 23:57:17 CET 2001
+% Random seed         : 69
+% File name           : GALE.hepatitis.cv.seed.69.fold.000004.test.arff
+% Number of instances : 16
+%
+
+@RELATION hepatitis
+
+@ATTRIBUTE	AGE	INTEGER [10,80]
+@ATTRIBUTE	SEX	{male,female}
+@ATTRIBUTE	STEROID	{no,yes}
+@ATTRIBUTE	ANTIVIRALS	{no,yes}
+@ATTRIBUTE	FATIGUE	{no,yes}
+@ATTRIBUTE	MALAISE	{no,yes}
+@ATTRIBUTE	ANOREXIA	{no,yes}
+@ATTRIBUTE	LIVER_BIG	{no,yes}
+@ATTRIBUTE	LIVER_FIRM	{no,yes}
+@ATTRIBUTE	SPLEEN_PALPABLE	{no,yes}
+@ATTRIBUTE	SPIDERS	{no,yes}
+@ATTRIBUTE	ASCITES	{no,yes}
+@ATTRIBUTE	VARICES	{no,yes}
+@ATTRIBUTE	BILIRUBIN	REAL
+@ATTRIBUTE	ALK_PHOSPHATE	INTEGER [33,250]
+@ATTRIBUTE	SGOT	INTEGER [13,500]
+@ATTRIBUTE	ALBUMIN	REAL
+@ATTRIBUTE	PROTIME	INTEGER [10,90]
+@ATTRIBUTE	HISTOLOGY	{no,yes}
+@ATTRIBUTE	Class	{DIE,LIVE}
+
+@DATA
+54,female,yes,no,yes,no,no,no,yes,no,no,no,no,3.2,85,28,3.8,?,yes,LIVE
+34,female,no,no,yes,no,no,no,yes,no,yes,no,no,1.0,72,46,4.4,57,no,LIVE
+57,female,no,no,yes,yes,no,yes,no,no,yes,yes,no,4.6,82,55,3.3,30,yes,DIE
+20,male,no,no,yes,yes,yes,no,yes,yes,yes,no,no,2.3,150,68,3.9,?,no,LIVE
+48,female,no,no,yes,yes,no,yes,yes,no,yes,yes,yes,4.8,123,157,2.7,31,yes,DIE
+42,female,no,no,no,no,no,yes,no,no,no,no,no,1.0,85,14,4.0,100,no,LIVE
+56,female,no,no,no,no,no,yes,no,no,no,no,no,0.7,62,33,3.0,?,no,LIVE
+50,male,no,no,yes,no,no,no,yes,yes,yes,no,no,0.9,230,117,3.4,41,yes,LIVE
+42,female,no,no,yes,yes,yes,yes,no,yes,yes,no,yes,4.6,?,55,3.3,?,yes,DIE
+45,female,no,no,yes,no,no,yes,yes,yes,no,no,no,1.2,81,65,3.0,?,no,LIVE
+30,male,no,no,no,no,no,no,no,no,no,no,no,1.0,85,18,4.0,?,no,LIVE
+47,female,no,yes,no,no,no,yes,no,no,no,no,no,?,?,60,?,?,no,LIVE
+39,female,yes,no,no,no,no,yes,no,no,no,no,no,1.0,85,20,4.0,?,no,LIVE
+37,female,no,no,no,no,no,yes,yes,no,yes,no,no,0.6,80,80,3.8,?,no,LIVE
+28,female,yes,no,yes,yes,no,yes,no,no,no,no,no,0.7,74,110,4.4,?,no,LIVE
+39,female,no,no,no,no,no,yes,no,no,no,no,no,0.9,85,60,4.0,?,no,LIVE

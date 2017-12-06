@@ -1,0 +1,57 @@
+%
+% GALE automatic stratified fold generation for CV
+%
+% Generated at        : Wed Feb 21 23:13:43 CET 2001
+% Random seed         : 69
+% File name           : GALE.autos.cv.seed.69.fold.000008.test.arff
+% Number of instances : 18
+%
+
+@RELATION autos
+
+@ATTRIBUTE	normalized-losses	REAL
+@ATTRIBUTE	make	{alfa-romero,audi,bmw,chevrolet,dodge,honda,isuzu,jaguar,mazda,mercedes-benz,mercury,mitsubishi,nissan,peugot,plymouth,porsche,renault,saab,subaru,toyota,volkswagen,volvo}
+@ATTRIBUTE	fuel-type	{diesel,gas}
+@ATTRIBUTE	aspiration	{std,turbo}
+@ATTRIBUTE	num-of-doors	{four,two}
+@ATTRIBUTE	body-style	{hardtop,wagon,sedan,hatchback,convertible}
+@ATTRIBUTE	drive-wheels	{4wd,fwd,rwd}
+@ATTRIBUTE	engine-location	{front,rear}
+@ATTRIBUTE	wheel-base	REAL
+@ATTRIBUTE	length	REAL
+@ATTRIBUTE	width	REAL
+@ATTRIBUTE	height	REAL
+@ATTRIBUTE	curb-weight	REAL
+@ATTRIBUTE	engine-type	{dohc,dohcv,l,ohc,ohcf,ohcv,rotor}
+@ATTRIBUTE	num-of-cylinders	{eight,five,four,six,three,twelve,two}
+@ATTRIBUTE	engine-size	REAL
+@ATTRIBUTE	fuel-system	{1bbl,2bbl,4bbl,idi,mfi,mpfi,spdi,spfi}
+@ATTRIBUTE	bore	REAL
+@ATTRIBUTE	stroke	REAL
+@ATTRIBUTE	compression-ratio	REAL
+@ATTRIBUTE	horsepower	REAL
+@ATTRIBUTE	peak-rpm	REAL
+@ATTRIBUTE	city-mpg	REAL
+@ATTRIBUTE	highway-mpg	REAL
+@ATTRIBUTE	price	REAL
+@ATTRIBUTE	symboling	{-3,-2,-1,0,1,2,3}
+
+@DATA
+?,renault,gas,std,two,hatchback,fwd,front,96.1,176.8,66.6,50.5,2460.0,ohc,four,132.0,mpfi,3.46,3.9,8.7,?,?,23.0,31.0,9895.0,2
+108.0,nissan,gas,std,four,wagon,fwd,front,100.4,184.6,66.5,56.1,3296.0,ohcv,six,181.0,mpfi,3.43,3.27,9.0,152.0,5200.0,17.0,22.0,14399.0,0
+129.0,mazda,gas,std,two,hatchback,fwd,front,98.8,177.8,66.5,53.7,2385.0,ohc,four,122.0,2bbl,3.39,3.39,8.6,84.0,4800.0,26.0,32.0,10595.0,1
+192.0,bmw,gas,std,four,sedan,rwd,front,101.2,176.8,64.8,54.3,2395.0,ohc,four,108.0,mpfi,3.5,2.8,8.8,101.0,5800.0,23.0,29.0,16925.0,0
+85.0,subaru,gas,std,four,wagon,4wd,front,96.9,173.6,65.4,54.9,2420.0,ohcf,four,108.0,2bbl,3.62,2.64,9.0,82.0,4800.0,23.0,29.0,8013.0,0
+142.0,mercedes-benz,gas,std,two,convertible,rwd,front,96.6,180.3,70.5,50.8,3685.0,ohcv,eight,234.0,mpfi,3.46,3.1,8.3,155.0,4750.0,16.0,18.0,35056.0,3
+74.0,volvo,gas,std,four,wagon,rwd,front,104.3,188.8,67.2,57.5,3034.0,ohc,four,141.0,mpfi,3.78,3.15,9.5,114.0,5400.0,23.0,28.0,13415.0,-1
+154.0,plymouth,gas,std,four,hatchback,fwd,front,93.7,157.3,63.8,50.6,1967.0,ohc,four,90.0,2bbl,2.97,3.23,9.4,68.0,5500.0,31.0,38.0,6229.0,1
+?,volkswagen,diesel,turbo,four,sedan,fwd,front,100.4,180.2,66.9,55.1,2579.0,ohc,four,97.0,idi,3.01,3.4,23.0,68.0,4500.0,33.0,38.0,13845.0,0
+148.0,dodge,gas,std,four,hatchback,fwd,front,93.7,157.3,63.8,50.6,1967.0,ohc,four,90.0,2bbl,2.97,3.23,9.4,68.0,5500.0,31.0,38.0,6229.0,1
+161.0,peugot,gas,turbo,four,sedan,rwd,front,108.0,186.7,68.3,56.0,3130.0,l,four,134.0,mpfi,3.61,3.21,7.0,142.0,5600.0,18.0,24.0,18150.0,0
+?,porsche,gas,std,two,convertible,rwd,rear,89.5,168.9,65.0,51.6,2800.0,ohcf,six,194.0,mpfi,3.74,2.9,9.5,207.0,5900.0,17.0,25.0,37028.0,3
+65.0,toyota,gas,std,four,hatchback,fwd,front,102.4,175.6,66.5,53.9,2458.0,ohc,four,122.0,mpfi,3.31,3.54,8.7,92.0,4200.0,27.0,32.0,11248.0,-1
+104.0,saab,gas,turbo,four,sedan,fwd,front,99.1,186.6,66.5,56.1,2847.0,dohc,four,121.0,mpfi,3.54,3.07,9.0,160.0,5500.0,19.0,26.0,18620.0,2
+119.0,plymouth,gas,std,two,hatchback,fwd,front,93.7,157.3,63.8,50.8,1918.0,ohc,four,90.0,2bbl,2.97,3.23,9.4,68.0,5500.0,37.0,41.0,5572.0,1
+122.0,nissan,gas,std,four,sedan,fwd,front,94.5,165.3,63.8,54.5,1971.0,ohc,four,97.0,2bbl,3.15,3.29,9.4,69.0,5200.0,31.0,37.0,7499.0,1
+83.0,subaru,gas,std,two,hatchback,fwd,front,93.7,156.9,63.4,53.7,2050.0,ohcf,four,97.0,2bbl,3.62,2.36,9.0,69.0,4900.0,31.0,36.0,5118.0,2
+110.0,honda,gas,std,four,sedan,fwd,front,96.5,163.4,64.0,54.5,2010.0,ohc,four,92.0,1bbl,2.91,3.41,9.2,76.0,6000.0,30.0,34.0,7295.0,0

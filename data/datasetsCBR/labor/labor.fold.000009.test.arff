@@ -1,0 +1,36 @@
+%
+% GALE automatic stratified fold generation for CV
+%
+% Generated at        : Thu Feb 22 00:02:10 CET 2001
+% Random seed         : 69
+% File name           : GALE.labor.cv.seed.69.fold.000009.test.arff
+% Number of instances : 6
+%
+
+@RELATION labor
+
+@ATTRIBUTE	'duration'	REAL
+@ATTRIBUTE	'wage-increase-first-year'	REAL
+@ATTRIBUTE	'wage-increase-second-year'	REAL
+@ATTRIBUTE	'wage-increase-third-year'	REAL
+@ATTRIBUTE	'cost-of-living-adjustment'	{'none','tcf','tc'}
+@ATTRIBUTE	'working-hours'	REAL
+@ATTRIBUTE	'pension'	{'none','ret_allw','empl_contr'}
+@ATTRIBUTE	'standby-pay'	REAL
+@ATTRIBUTE	'shift-differential'	REAL
+@ATTRIBUTE	'education-allowance'	{'yes','no'}
+@ATTRIBUTE	'statutory-holidays'	REAL
+@ATTRIBUTE	'vacation'	{'below_average','average','generous'}
+@ATTRIBUTE	'longterm-disability-assistance'	{'yes','no'}
+@ATTRIBUTE	'contribution-to-dental-plan'	{'none','half','full'}
+@ATTRIBUTE	'bereavement-assistance'	{'yes','no'}
+@ATTRIBUTE	'contribution-to-health-plan'	{'none','half','full'}
+@ATTRIBUTE	'class'	{'bad','good'}
+
+@DATA
+1.0,2.0,?,?,'tc',40.0,'ret_allw',4.0,0.0,'no',11.0,'generous','no','none','no','none','bad'
+3.0,2.0,3.0,?,'tcf',?,'empl_contr',?,?,'yes',?,?,'yes','half','yes',?,'good'
+?,?,?,?,?,38.0,'empl_contr',?,5.0,?,11.0,'generous','yes','half','yes','half','good'
+3.0,4.0,3.5,?,'none',40.0,'empl_contr',?,6.0,?,11.0,'average','yes','full',?,'full','good'
+2.0,5.0,4.5,?,'none',38.0,?,14.0,5.0,?,11.0,'below_average','yes',?,?,'full','good'
+2.0,4.0,5.0,?,'tcf',35.0,?,13.0,5.0,?,15.0,'generous',?,?,?,?,'good'
