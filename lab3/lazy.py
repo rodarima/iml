@@ -39,17 +39,19 @@ def do_getData(dataset_path, dataset_name, i, data_type):
 
 	type_list = np.array(meta.types())
 
-	nominal_bool = (type_list == 'numeric')
+	numerical_bool = (type_list == 'numeric')
 
-	if not np.any(nominal_bool):
+	if not np.any(numerical_bool):
 		print('The dataset doesn\'t contain numerical data.')
 		exit(1)
 
-	nominal_columns = np.array(meta.names())[nominal_bool]
+	numerical_columns = np.array(meta.names())[numerical_bool]
+	if np.any(numerical_bool == False):
+		nominal_columns = np.array(meta.names())[numerical_bool == False]
+		Xn = df[nominal_columns].as_matrix()
 
 	# shape=(n_samples, n_features)
-	X = df[nominal_columns].as_matrix()
-
+	X = df[numerical_columns].as_matrix()
 
 	# Scaling
 	mean_vec = np.matrix(np.mean(X, axis=0))
@@ -62,13 +64,15 @@ def do_getData(dataset_path, dataset_name, i, data_type):
 	Xcs = Xc/sd # Xcs = X centered and scaled
 	# Problem with division by 0
 	Xcs = np.nan_to_num(Xcs)
-	return Xcs
+	return Xcs, Xn
 
 
 #Fills training and test
 dataset_name = DATASET.split("/")[-1] + ".fold.00000"
 train = [0] * N_FOLD
 testing = [0] * N_FOLD
+train_classes = [0] * N_FOLD
+testing_classes = [0] * N_FOLD
 for i in range(N_FOLD):
 	train[i] = do_getData(DATASET, dataset_name, i, 'train')
 	testing[i] = do_getData(DATASET, dataset_name, i, 'test')
