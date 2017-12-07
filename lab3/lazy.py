@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
 import pandas as pd
+import math
 import sys, os.path
 
 np.random.seed(1)
@@ -66,6 +67,16 @@ def do_getData(dataset_path, dataset_name, i, data_type):
 	Xcs = np.nan_to_num(Xcs)
 	return Xcs, Xn
 
+def do_kNNAlgorithm(training_set, testing_instance, k, training_set_classes):
+	e_distances = []
+	for i in range(training_set.shape[0]):
+		#e_distances[i] = np.linalg.norm(train_matrix[i] - testing_instance)
+		e_distance = np.linalg.norm(training_set[i] - testing_instance)
+		e_distances.append((training_set[i], e_distance, training_set_classes[i]))
+
+	e_distances.sort(key=lambda x: x[1])
+	neighbors = e_distances[:int(k)]
+	return neighbors
 
 #Fills training and test
 dataset_name = DATASET.split("/")[-1] + ".fold.00000"
@@ -74,8 +85,20 @@ testing = [0] * N_FOLD
 train_classes = [0] * N_FOLD
 testing_classes = [0] * N_FOLD
 for i in range(N_FOLD):
-	train[i] = do_getData(DATASET, dataset_name, i, 'train')
-	testing[i] = do_getData(DATASET, dataset_name, i, 'test')
+	train[i], train_classes[i] = do_getData(DATASET, dataset_name, i, 'train')
+	testing[i], testing_classes[i] = do_getData(DATASET, dataset_name, i, 'test')
 
-print('trainMatrix: {} \n'.format(train))
-print('testMatrix: {} \n'.format(testing))
+#print('trainMatrix: {} \n'.format(train))
+#print('train classes: {} \n'.format(train_classes))
+#print('testMatrix: {} \n'.format(testing))
+#print('test classes: {} \n'.format(testing_classes))
+
+neighbors = [[0] * N_FOLD] * N_FOLD
+for i in range(N_FOLD):
+	#For K we can use the sqr root of the number of samples, an make it odd to reduce the chance
+	#of a tie vote
+	k=np.ceil(math.sqrt(train[i].shape[0]) // 2 * 2 + 1)
+	for j in range(N_FOLD):
+		neighbors[i][j] = do_kNNAlgorithm(train[i], testing[i][j], k, train_classes[i])
+
+print('neighbors: {} \n'.format(neighbors))
