@@ -75,6 +75,7 @@ def select_most_common_class(classes):
 
 def do_kNNAlgorithm(training_set, testing_instance, conf, training_set_classes):
 	k, select_f, distance_f = conf
+	k = int(k)
 	distances = training_set - testing_instance
 	norms = np.linalg.norm(distances, axis=1)
 	sorted_indices = np.argsort(norms)
@@ -114,7 +115,8 @@ for i in range(N_FOLD):
 #print('train classes: {} \n'.format(train_classes))
 #print('testMatrix: {} \n'.format(testing))
 #print('test classes: {} \n'.format(testing_classes))
-
+conf_vals = np.meshgrid([1,3,5,7],['euclidean','cosine','manhattan'],['vote','common'])
+conf_combinations = np.array(conf_vals).T.reshape(-1,3)
 for i in range(1):
 	N_TEST = testing[i].shape[0]
 	N_TRAIN = train[i].shape[0]
@@ -133,7 +135,10 @@ for i in range(1):
 	for j in range(N_TEST):
 		selected_point = test_block[j]
 		expected_class = test_classes_block[j]
-		classified[j] = do_kNNAlgorithm(train_block, selected_point, k, train_classes_block)
+		for c in (conf_combinations.shape[0]):
+			conf = conf_combinations[c]
+			classified[j] = do_kNNAlgorithm(train_block, selected_point, conf, train_classes_block)
+		
 	
 	
 	correct = (classified == test_classes_block)
