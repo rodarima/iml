@@ -134,9 +134,9 @@ for i in range(N_FOLD):
 #print('train classes: {} \n'.format(train_classes))
 #print('testMatrix: {} \n'.format(testing))
 #print('test classes: {} \n'.format(testing_classes))
-conf_vals = np.meshgrid([1,3,5,7], ['vote','common'], [euclidean,cosine,manhattan])
+conf_vals = np.meshgrid([1,3,5,7], ['vote'], [euclidean,cosine,manhattan])
 conf_combinations = np.array(conf_vals).T.reshape(-1,3)
-for i in range(1):
+for i in range(N_FOLD):
 	N_TEST = testing[i].shape[0]
 	N_TRAIN = train[i].shape[0]
 
@@ -163,7 +163,7 @@ for i in range(1):
 	
 	
 		correct = (classified == test_classes_block)
-		print('{} {:.3f}'.format(conf, 100*np.sum(correct)/N_TEST))
+		print('fold={} {} {:.3f}'.format(i, conf, 100*np.sum(correct)/N_TEST))
 
 	
 	
