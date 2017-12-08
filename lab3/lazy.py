@@ -5,6 +5,7 @@ import matplotlib.colors as colors
 import matplotlib.cm as cmx
 import pandas as pd
 import sys, os.path
+import scipy.spatial.distance
 
 np.random.seed(1)
 
@@ -73,12 +74,30 @@ def select_most_common_class(classes):
 	#print(counts)
 	return uniq_classes[np.argmax(counts)]
 
-def do_kNNAlgorithm(training_set, testing_instance, conf, training_set_classes):
-	k, select_f, distance_f = conf
-	k = int(k)
+def cosine(train, test_instance):
+	r = np.zeros(train.shape[0])
+	for i in range(train.shape[0]):
+		r[i] = scipy.spatial.distance.cosine(train[i], test_instance)
+	
+	return r
+
+def manhattan(train, test_instance):
+	r = np.zeros(train.shape[0])
+	for i in range(train.shape[0]):
+		r[i] = scipy.spatial.distance.cityblock(train[i], test_instance)
+	
+	return r
+
+def euclidean(training_set, testing_instance):
 	distances = training_set - testing_instance
 	norms = np.linalg.norm(distances, axis=1)
-	sorted_indices = np.argsort(norms)
+	return norms
+	
+
+def do_kNNAlgorithm(training_set, testing_instance, conf, training_set_classes):
+	k, select_f, distance_f = conf
+	measures = distance_f(training_set, testing_instance)
+	sorted_indices = np.argsort(measures)
 	classes = training_set_classes[sorted_indices[0:k]]
 
 	selected_class = select_most_common_class(classes)
@@ -115,7 +134,7 @@ for i in range(N_FOLD):
 #print('train classes: {} \n'.format(train_classes))
 #print('testMatrix: {} \n'.format(testing))
 #print('test classes: {} \n'.format(testing_classes))
-conf_vals = np.meshgrid([1,3,5,7],['euclidean','cosine','manhattan'],['vote','common'])
+conf_vals = np.meshgrid([1,3,5,7], ['vote','common'], [euclidean,cosine,manhattan])
 conf_combinations = np.array(conf_vals).T.reshape(-1,3)
 for i in range(1):
 	N_TEST = testing[i].shape[0]
@@ -132,17 +151,19 @@ for i in range(1):
 	k=3
 
 	classified = np.empty([N_TEST])
-	for j in range(N_TEST):
-		selected_point = test_block[j]
-		expected_class = test_classes_block[j]
-		for c in (conf_combinations.shape[0]):
-			conf = conf_combinations[c]
+	for c in range(conf_combinations.shape[0]):
+		conf = conf_combinations[c]
+		for j in range(N_TEST):
+			selected_point = test_block[j]
+			expected_class = test_classes_block[j]
 			classified[j] = do_kNNAlgorithm(train_block, selected_point, conf, train_classes_block)
+		
+
 		
 	
 	
-	correct = (classified == test_classes_block)
-	print('{:.3f}'.format(100*np.sum(correct)/N_TEST))
+		correct = (classified == test_classes_block)
+		print('{} {:.3f}'.format(conf, 100*np.sum(correct)/N_TEST))
 
 	
 	
