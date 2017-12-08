@@ -94,10 +94,19 @@ def euclidean(training_set, testing_instance):
 	return norms
 	
 
-def do_kNNAlgorithm(training_set, testing_instance, conf, training_set_classes):
+def do_kNNAlgorithm(training_set, train_nominal, testing_instance, test_nominal,
+		conf, training_set_classes, gamma=1.1):
 	k, select_f, distance_f = conf
-	measures = distance_f(training_set, testing_instance)
-	sorted_indices = np.argsort(measures)
+	distances = distance_f(training_set, testing_instance)
+
+	distances_nominal = np.zeros(train_nominal.shape[0], dtype=np.int)
+	for i in range(train_nominal.shape[0]):
+		for j in range(train_nominal.shape[1]):
+			if(train_nominal[i][j] != test_nominal[j]):
+				distances_nominal[i] += 1
+	distances += gamma * distances_nominal
+
+	sorted_indices = np.argsort(distances)
 	classes = training_set_classes[sorted_indices[0:k]]
 
 	selected_class = select_most_common_class(classes)
@@ -141,7 +150,9 @@ for i in range(N_FOLD):
 	N_TRAIN = train[i].shape[0]
 
 	train_block = train[i]
+	train_nominal_block = train_nominal[i]
 	test_block = testing[i]
+	test_nominal_block = testing_nominal[i]
 	train_classes_block = train_classes[i]
 	test_classes_block = testing_classes[i]
 
@@ -155,8 +166,15 @@ for i in range(N_FOLD):
 		conf = conf_combinations[c]
 		for j in range(N_TEST):
 			selected_point = test_block[j]
+			selected_nominal = test_nominal_block[j]
 			expected_class = test_classes_block[j]
-			classified[j] = do_kNNAlgorithm(train_block, selected_point, conf, train_classes_block)
+			classified[j] = do_kNNAlgorithm(
+				train_block,
+				train_nominal_block,
+				selected_point,
+				selected_nominal,
+				conf,
+				train_classes_block)
 		
 
 		
