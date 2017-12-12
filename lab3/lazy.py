@@ -6,6 +6,8 @@ import matplotlib.cm as cmx
 import pandas as pd
 import sys, os.path
 import scipy.spatial.distance
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import f_classif
 
 np.random.seed(1)
 
@@ -18,6 +20,7 @@ DATASET = sys.argv[1]
 GRAPH = True
 ERROR = False
 N_FOLD = 10
+WEIGHT = True
 
 #bn = os.path.basename(DATASET)
 #img_fn = bn.replace('.arff', '.png')
@@ -117,20 +120,32 @@ def do_kNNAlgorithm(training_set, train_nominal, testing_instance, test_nominal,
 
 	selected_class = select_most_common_class(classes)
 
-	#e_distances = []
-	#for i in range(training_set.shape[0]):
-	#	#e_distances[i] = np.linalg.norm(train_matrix[i] - testing_instance)
-	#	e_distance = np.linalg.norm(training_set[i] - testing_instance)
-	#	e_distances.append((training_set[i], e_distance, training_set_classes[i]))
+	return selected_class
 
-	#e_distances.sort(key=lambda x: x[1])
-	##np.argsort(e_distances)
-	#neighbors = e_distances[:int(k)]
+def do_weightedKNNAlgorithm(training_set, train_nominal, testing_instance, test_nominal,
+		conf, training_set_classes, gamma=1.1):
+	k, select_f, distance_f = conf
 
-	#class_name, counts = np.unique(training_set_classes, return_counts=True)
-	#selected_class = class_name[np.argmax(counts)]
+	weights = SelectKBest(f_classif, 'all').fit(training_set,training_set_classes).scores_
+	weighted_training_set = training_set + weights
+
+	distances = distance_f(weighted_training_set, testing_instance)
+
+	distances_nominal = np.zeros(train_nominal.shape[0], dtype=np.int)
+	for i in range(train_nominal.shape[0]):
+		for j in range(train_nominal.shape[1]):
+			if(train_nominal[i][j] != test_nominal[j]):
+				distances_nominal[i] += 1
+	distances += gamma * distances_nominal
+
+	sorted_indices = np.argsort(distances)
+	classes = training_set_classes[sorted_indices[0:k]]
+
+	selected_class = select_most_common_class(classes)
 
 	return selected_class
+	
+
 
 #Fills training and test
 dataset_name = DATASET.split("/")[-1] + ".fold.00000"
@@ -174,13 +189,22 @@ for i in range(N_FOLD):
 			selected_point = test_block[j]
 			selected_nominal = test_nominal_block[j]
 			expected_class = test_classes_block[j]
-			classified[j] = do_kNNAlgorithm(
+			if WEIGHT:
+				classified[j] = do_weightedKNNAlgorithm(
 				train_block,
 				train_nominal_block,
 				selected_point,
 				selected_nominal,
 				conf,
 				train_classes_block)
+			else:
+				classified[j] = do_kNNAlgorithm(
+					train_block,
+					train_nominal_block,
+					selected_point,
+					selected_nominal,
+					conf,
+					train_classes_block)
 		
 
 		
