@@ -93,6 +93,12 @@ def euclidean(training_set, testing_instance):
 	norms = np.linalg.norm(distances, axis=1)
 	return norms
 	
+def canberra(train, test_instance):
+	r = np.zeros(train.shape[0])
+	for i in range(train.shape[0]):
+		r[i] = scipy.spatial.distance.canberra(train[i], test_instance)
+	
+	return r
 
 def do_kNNAlgorithm(training_set, train_nominal, testing_instance, test_nominal,
 		conf, training_set_classes, gamma=1.1):
@@ -143,7 +149,7 @@ for i in range(N_FOLD):
 #print('train classes: {} \n'.format(train_classes))
 #print('testMatrix: {} \n'.format(testing))
 #print('test classes: {} \n'.format(testing_classes))
-conf_vals = np.meshgrid([1,3,5,7], ['vote'], [euclidean,cosine,manhattan])
+conf_vals = np.meshgrid([1,3,5,7], ['vote'], [euclidean,cosine,manhattan,canberra])
 conf_combinations = np.array(conf_vals).T.reshape(-1,3)
 for i in range(N_FOLD):
 	N_TEST = testing[i].shape[0]
