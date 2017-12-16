@@ -134,6 +134,10 @@ distance_functions = {
 	'canberra':		canberra
 }
 
+def minMaxScale(x):
+	#y = (x-min(x))/(max(x)-min(x))
+	return (x - x.min()) / (x.max() - x.min())
+
 def knn(training_set, train_nominal, testing_instance, test_nominal,
 		conf, training_set_classes, gamma=1.1, use_weight=False, use_feature_selection=False):
 
@@ -142,7 +146,9 @@ def knn(training_set, train_nominal, testing_instance, test_nominal,
 	if use_weight:
 		weights = SelectKBest(f_classif, 'all').fit(
 			training_set, training_set_classes).scores_
-		training_set += weights
+		#training_set += weights
+		training_set = minMaxScale(training_set) * weights
+		testing_instance = minMaxScale(testing_instance) * weights
 	if use_feature_selection:
 		scores = SelectKBest(f_classif, 'all').fit(
 			training_set,training_set_classes).scores_
