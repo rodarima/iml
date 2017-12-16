@@ -122,7 +122,7 @@ def canberra(train, test_instance):
 	return r
 
 def knn(training_set, train_nominal, testing_instance, test_nominal,
-		conf, training_set_classes, gamma=1.1, use_weight=False):
+		conf, training_set_classes, gamma=1.1, use_weight=False, feature_selection=False):
 
 	k, select_f, distance_f = conf
 
@@ -130,6 +130,13 @@ def knn(training_set, train_nominal, testing_instance, test_nominal,
 		weights = SelectKBest(f_classif, 'all').fit(
 			training_set, training_set_classes).scores_
 		training_set += weights
+	if feature_selection:
+		scores = SelectKBest(f_classif, 'all').fit(
+			training_set,training_set_classes).scores_
+		avg = np.sum(scores)/scores.shape[0]
+		training_set = training_set[:,np.where(scores> avg)[0]]
+		test_instance = testing_instance[np.where(scores> avg)[0]]
+
 		
 	distances = distance_f(training_set, testing_instance)
 	distances_nominal = np.zeros(train_nominal.shape[0], dtype=np.int)
