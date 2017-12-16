@@ -37,9 +37,11 @@ def do_getData(dataset_path, dataset_name, i, data_type):
 	df.replace([np.inf, -np.inf], np.nan)
 	df = df.dropna() # Remove NaN elements
 	class_name = df.columns[-1] # The last column is considered the class
+	# Remove the original data to avoid problems
+	del data
 
 	classes = meta[class_name][1]
-	y = np.array([classes.index(e.decode('utf-8')) for e in data[class_name]])
+	y = np.array([classes.index(e.decode('utf-8')) for e in df[class_name]])
 
 	type_list = np.array(meta.types())
 
@@ -71,11 +73,27 @@ def do_getData(dataset_path, dataset_name, i, data_type):
 	return Xcs, Xn, y
 
 # Select the most common class
-def select_most_common_class(classes):
+def most_common_class(distances, classes):
 	#print(classes)
 	uniq_classes, counts = np.unique(classes, return_counts=True)
 	#print(counts)
 	return uniq_classes[np.argmax(counts)]
+
+def vote_class(k_distances, k_classes):
+	#print(classes)
+	uniq_classes, counts = np.unique(k_classes, return_counts=True)
+	all_classes = np.unique(k_classes)
+	weight = {}
+	for c in all_classes:
+		ind = (k_classes == c)
+
+		# Each class vote with a value that increasses as close to the instance
+		weight[c] = np.sum(1 / (k_distances[ind] ** 2))
+	
+	# Pick the class with the highest voted value
+	selected = max(weight, key=weight.get)
+	
+	return selected
 
 def cosine(train, test_instance):
 	r = np.zeros(train.shape[0])
@@ -122,9 +140,10 @@ def knn(training_set, train_nominal, testing_instance, test_nominal,
 	distances += gamma * distances_nominal
 
 	sorted_indices = np.argsort(distances)
-	classes = training_set_classes[sorted_indices[0:k]]
+	k_distances = distances[sorted_indices[0:k]]
+	k_classes = training_set_classes[sorted_indices[0:k]]
 
-	selected_class = select_most_common_class(classes)
+	selected_class = select_f(k_distances, k_classes)
 
 	return selected_class
 
@@ -143,7 +162,11 @@ for i in range(N_FOLD):
 	train[i], train_nominal[i], train_classes[i] = do_getData(DATASET, dataset_name, i, 'train')
 	testing[i], testing_nominal[i], testing_classes[i] = do_getData(DATASET, dataset_name, i, 'test')
 
-conf_vals = np.meshgrid([1,3,5,7], ['vote'], [euclidean,cosine,manhattan,canberra])
+conf_vals = np.meshgrid(
+	[1,3,5,7],
+	[most_common_class, vote_class],
+	[euclidean,cosine,manhattan,canberra])
+
 conf_combinations = np.array(conf_vals).T.reshape(-1,3)
 
 for i in range(N_FOLD):
@@ -160,7 +183,7 @@ for i in range(N_FOLD):
 	#For K we can use the sqr root of the number of samples, an make it odd to reduce the chance
 	#of a tie vote
 	#k = int(np.sqrt(N_TRAIN) // 2 * 2 + 1)
-	k=3
+	k = 3
 
 	classified = np.empty([N_TEST])
 	for c in range(conf_combinations.shape[0]):
@@ -172,7 +195,7 @@ for i in range(N_FOLD):
 
 			classified[j] = knn(train_block,
 				train_nominal_block, selected_point, selected_nominal, conf,
-				train_classes_block use_weight=WEIGHT)
+				train_classes_block, use_weight=WEIGHT)
 	
 		correct = (classified == test_classes_block)
 		print('fold={} {} {:.3f}'.format(i, conf, 100*np.sum(correct)/N_TEST))
