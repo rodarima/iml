@@ -103,11 +103,17 @@ def canberra(train, test_instance):
 	
 	return r
 
-def do_kNNAlgorithm(training_set, train_nominal, testing_instance, test_nominal,
-		conf, training_set_classes, gamma=1.1):
+def knn(training_set, train_nominal, testing_instance, test_nominal,
+		conf, training_set_classes, gamma=1.1, use_weight=False):
+
 	k, select_f, distance_f = conf
+
+	if use_weight:
+		weights = SelectKBest(f_classif, 'all').fit(
+			training_set, training_set_classes).scores_
+		training_set += weights
+		
 	distances = distance_f(training_set, testing_instance)
-
 	distances_nominal = np.zeros(train_nominal.shape[0], dtype=np.int)
 	for i in range(train_nominal.shape[0]):
 		for j in range(train_nominal.shape[1]):
@@ -121,30 +127,6 @@ def do_kNNAlgorithm(training_set, train_nominal, testing_instance, test_nominal,
 	selected_class = select_most_common_class(classes)
 
 	return selected_class
-
-def do_weightedKNNAlgorithm(training_set, train_nominal, testing_instance, test_nominal,
-		conf, training_set_classes, gamma=1.1):
-	k, select_f, distance_f = conf
-
-	weights = SelectKBest(f_classif, 'all').fit(training_set,training_set_classes).scores_
-	weighted_training_set = training_set + weights
-
-	distances = distance_f(weighted_training_set, testing_instance)
-
-	distances_nominal = np.zeros(train_nominal.shape[0], dtype=np.int)
-	for i in range(train_nominal.shape[0]):
-		for j in range(train_nominal.shape[1]):
-			if(train_nominal[i][j] != test_nominal[j]):
-				distances_nominal[i] += 1
-	distances += gamma * distances_nominal
-
-	sorted_indices = np.argsort(distances)
-	classes = training_set_classes[sorted_indices[0:k]]
-
-	selected_class = select_most_common_class(classes)
-
-	return selected_class
-	
 
 
 #Fills training and test
@@ -156,16 +138,14 @@ train_nominal = [0] * N_FOLD
 testing_nominal = [0] * N_FOLD
 train_classes = [0] * N_FOLD
 testing_classes = [0] * N_FOLD
+
 for i in range(N_FOLD):
 	train[i], train_nominal[i], train_classes[i] = do_getData(DATASET, dataset_name, i, 'train')
 	testing[i], testing_nominal[i], testing_classes[i] = do_getData(DATASET, dataset_name, i, 'test')
 
-#print('trainMatrix: {} \n'.format(train))
-#print('train classes: {} \n'.format(train_classes))
-#print('testMatrix: {} \n'.format(testing))
-#print('test classes: {} \n'.format(testing_classes))
 conf_vals = np.meshgrid([1,3,5,7], ['vote'], [euclidean,cosine,manhattan,canberra])
 conf_combinations = np.array(conf_vals).T.reshape(-1,3)
+
 for i in range(N_FOLD):
 	N_TEST = testing[i].shape[0]
 	N_TRAIN = train[i].shape[0]
@@ -189,34 +169,10 @@ for i in range(N_FOLD):
 			selected_point = test_block[j]
 			selected_nominal = test_nominal_block[j]
 			expected_class = test_classes_block[j]
-			if WEIGHT:
-				classified[j] = do_weightedKNNAlgorithm(
-				train_block,
-				train_nominal_block,
-				selected_point,
-				selected_nominal,
-				conf,
-				train_classes_block)
-			else:
-				classified[j] = do_kNNAlgorithm(
-					train_block,
-					train_nominal_block,
-					selected_point,
-					selected_nominal,
-					conf,
-					train_classes_block)
-		
 
-		
-	
+			classified[j] = knn(train_block,
+				train_nominal_block, selected_point, selected_nominal, conf,
+				train_classes_block use_weight=WEIGHT)
 	
 		correct = (classified == test_classes_block)
 		print('fold={} {} {:.3f}'.format(i, conf, 100*np.sum(correct)/N_TEST))
-
-	
-	
-
-
-	
-
-#print('neighbors: {} \n'.format(neighbors))
