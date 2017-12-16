@@ -8,6 +8,7 @@ import sys, os.path
 import scipy.spatial.distance
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import f_classif
+from tabulate import tabulate
 
 np.random.seed(1)
 
@@ -21,6 +22,7 @@ GRAPH = True
 ERROR = False
 N_FOLD = 10
 WEIGHT = True
+#READ = True
 
 #bn = os.path.basename(DATASET)
 #img_fn = bn.replace('.arff', '.png')
@@ -95,11 +97,15 @@ def vote_class(k_distances, k_classes):
 	
 	return selected
 
+select_functions = {
+	'most_common': most_common_class,
+	'weighted_voting': vote_class
+}
+
 def cosine(train, test_instance):
 	r = np.zeros(train.shape[0])
 	for i in range(train.shape[0]):
 		r[i] = scipy.spatial.distance.cosine(train[i], test_instance)
-	
 	return r
 
 def manhattan(train, test_instance):
@@ -121,17 +127,25 @@ def canberra(train, test_instance):
 	
 	return r
 
+distance_functions = {
+	'cosine':		cosine,
+	'manhattan':	manhattan,
+	'euclidean':	euclidean,
+	'canberra':		canberra
+}
+
 def knn(training_set, train_nominal, testing_instance, test_nominal,
 		conf, training_set_classes, gamma=1.1, use_weight=False):
 
-	k, select_f, distance_f = conf
+	k, select_name, distance_name = conf
 
 	if use_weight:
 		weights = SelectKBest(f_classif, 'all').fit(
 			training_set, training_set_classes).scores_
 		training_set += weights
 		
-	distances = distance_f(training_set, testing_instance)
+	distance_function = distance_functions[distance_name]
+	distances = distance_function(training_set, testing_instance)
 	distances_nominal = np.zeros(train_nominal.shape[0], dtype=np.int)
 	for i in range(train_nominal.shape[0]):
 		for j in range(train_nominal.shape[1]):
@@ -143,7 +157,8 @@ def knn(training_set, train_nominal, testing_instance, test_nominal,
 	k_distances = distances[sorted_indices[0:k]]
 	k_classes = training_set_classes[sorted_indices[0:k]]
 
-	selected_class = select_f(k_distances, k_classes)
+	select = select_functions[select_name]
+	selected_class = select(k_distances, k_classes)
 
 	return selected_class
 
@@ -164,10 +179,12 @@ for i in range(N_FOLD):
 
 conf_vals = np.meshgrid(
 	[1,3,5,7],
-	[most_common_class, vote_class],
-	[euclidean,cosine,manhattan,canberra])
+	list(select_functions),
+	list(distance_functions))
 
 conf_combinations = np.array(conf_vals).T.reshape(-1,3)
+
+results = []
 
 for i in range(N_FOLD):
 	N_TEST = testing[i].shape[0]
@@ -187,7 +204,9 @@ for i in range(N_FOLD):
 
 	classified = np.empty([N_TEST])
 	for c in range(conf_combinations.shape[0]):
-		conf = conf_combinations[c]
+		conf = list(conf_combinations[c])
+		# Replace str k with integer value
+		conf[0] = int(conf[0])
 		for j in range(N_TEST):
 			selected_point = test_block[j]
 			selected_nominal = test_nominal_block[j]
@@ -198,4 +217,36 @@ for i in range(N_FOLD):
 				train_classes_block, use_weight=WEIGHT)
 	
 		correct = (classified == test_classes_block)
-		print('fold={} {} {:.3f}'.format(i, conf, 100*np.sum(correct)/N_TEST))
+		percent = np.sum(correct)/N_TEST
+
+		conf.append(percent)
+		results.append([i] + conf)
+		print('fold={} {} {:.3f}'.format(i, conf, 100*percent))
+	
+res = pd.DataFrame(results)
+
+fn = DATASET + '/results.txt'
+res.to_csv(fn, header=False, index=False)
+print('Results saved in ' + fn)
+print()
+
+means = np.zeros(conf_combinations.shape[0])
+
+for i in range(N_FOLD):
+	means += np.array(res[res[0] == i][4])
+
+means /= N_FOLD
+
+ind = np.argsort(-means)
+
+best_results = 10
+sorted_means = means[ind]
+
+table = []
+headers = ['k', 'select', 'distance', 'mean %']
+
+for i in range(best_results):
+	table.append(list(conf_combinations[i]) + [sorted_means[i] * 100])
+
+print('Dataset {}'.format(DATASET))
+print(tabulate(table, headers=headers, floatfmt='.2f'))
