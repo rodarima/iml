@@ -135,7 +135,7 @@ distance_functions = {
 }
 
 def knn(training_set, train_nominal, testing_instance, test_nominal,
-		conf, training_set_classes, gamma=1.1, use_weight=False, feature_selection=False):
+		conf, training_set_classes, gamma=1.1, use_weight=False, use_feature_selection=False):
 
 	k, select_name, distance_name = conf
 
@@ -143,7 +143,7 @@ def knn(training_set, train_nominal, testing_instance, test_nominal,
 		weights = SelectKBest(f_classif, 'all').fit(
 			training_set, training_set_classes).scores_
 		training_set += weights
-	if feature_selection:
+	if use_feature_selection:
 		scores = SelectKBest(f_classif, 'all').fit(
 			training_set,training_set_classes).scores_
 		avg = np.sum(scores)/scores.shape[0]
