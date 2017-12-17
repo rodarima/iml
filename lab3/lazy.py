@@ -21,7 +21,8 @@ DATASET = sys.argv[1]
 GRAPH = True
 ERROR = False
 N_FOLD = 10
-WEIGHT = True
+WEIGHT = False
+FEATURE = False
 #READ = True
 
 #bn = os.path.basename(DATASET)
@@ -154,7 +155,7 @@ def knn(training_set, train_nominal, testing_instance, test_nominal,
 			training_set,training_set_classes).scores_
 		avg = np.sum(scores)/scores.shape[0]
 		training_set = training_set[:,np.where(scores> avg)[0]]
-		test_instance = testing_instance[np.where(scores> avg)[0]]
+		testing_instance = testing_instance[np.where(scores> avg)[0]]
 
 		
 	distance_function = distance_functions[distance_name]
@@ -227,7 +228,7 @@ for i in range(N_FOLD):
 
 			classified[j] = knn(train_block,
 				train_nominal_block, selected_point, selected_nominal, conf,
-				train_classes_block, use_weight=WEIGHT)
+				train_classes_block, use_weight=WEIGHT, use_feature_selection=FEATURE)
 	
 		correct = (classified == test_classes_block)
 		percent = np.sum(correct)/N_TEST
