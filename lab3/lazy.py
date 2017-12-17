@@ -1,3 +1,4 @@
+from __future__ import print_function
 from scipy.io import arff
 import numpy as np
 import matplotlib.pyplot as plt
@@ -9,6 +10,7 @@ import scipy.spatial.distance
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import f_classif
 from tabulate import tabulate
+import time
 import sys, argparse, re
 
 np.random.seed(1)
@@ -17,9 +19,11 @@ parser = argparse.ArgumentParser(
 	description='Fit a dataset using KNN lazy learning')
 	
 parser.add_argument('-w', '--weights', action='store_true', default=False,
-	help='use weights (dafault: no)')
+	help='use weights (default: no)')
 parser.add_argument('-s', '--select', action='store_true', default=False,
-	help='use feature selection (dafault: no)')
+	help='use feature selection (default: no)')
+parser.add_argument('-t', '--time', action='store_true', default=False,
+	help='sort and filter results by time (default: no (sorted by correct %))')
 parser.add_argument("dataset",
 	help="Folder containing the dataset in folds")
 
@@ -243,6 +247,7 @@ def main():
 			conf = list(conf_combinations[c])
 			# Replace str k with integer value
 			conf[0] = int(conf[0])
+			time1 = time.clock()
 			for j in range(N_TEST):
 				selected_point = test_block[j]
 				selected_nominal = test_nominal_block[j]
@@ -250,13 +255,16 @@ def main():
 
 				classified[j] = knn(train_block,
 					train_nominal_block, selected_point, selected_nominal, conf,
-					train_classes_block, use_weight=args.weights,
-					use_feature_selection=args.select)
+					train_classes_block, use_weight=False,
+					use_feature_selection=False)
 		
+			time2 = time.clock()
+
 			correct = (classified == test_classes_block)
 			percent = np.sum(correct)/float(N_TEST)
 
 			conf.append(percent)
+			conf.append((time2-time1)*1000.0)
 			results.append([i] + conf)
 
 			step = conf_combinations.shape[0] * i + c + 1
@@ -264,9 +272,9 @@ def main():
 			#print('fold={} {} {:.3f}'.format(i, conf, 100.0*percent))
 			print('\r{:3.1f}%\tfold={}\tconf={}\033[K'.format(
 				completed, i, c),
-				end='', file=sys.stderr, flush=True)
+				end='', file=sys.stderr)
 
-	print(file=sys.stderr, flush=True)
+	print(file=sys.stderr)
 	res = pd.DataFrame(results)
 
 	#fn = args.dataset + '/results.txt'
@@ -275,22 +283,33 @@ def main():
 	#print()
 
 	means = np.zeros(conf_combinations.shape[0])
+	times = np.zeros(conf_combinations.shape[0])
 
 	for i in range(N_FOLD):
 		means += np.array(res[res[0] == i][4])
+		times += np.array(res[res[0] == i][5])
 
 	means /= float(N_FOLD)
 
-	ind = np.argsort(-means)
+	#sorting by accuracy:
+	if args.time: 
+		ind = np.argsort(-times)
 
-	best_results = 10
-	sorted_means = means[ind]
+		best_results = 10
+		sorted_means = means[ind]
+		sorted_times = times[ind]
+	else:
+		ind = np.argsort(-means)
+
+		best_results = 10
+		sorted_means = means[ind]
+		sorted_times = times[ind]
 
 	table = []
-	headers = ['k', 'select', 'distance', 'mean %']
+	headers = ['k', 'select', 'distance', 'mean %', 'time']
 
 	for i in range(best_results):
-		table.append(list(conf_combinations[i]) + [sorted_means[i] * 100.0])
+		table.append(list(conf_combinations[i]) + [sorted_means[i] * 100.0] + [times[i]])
 
 	print('Dataset: {}'.format(args.dataset))
 	print('Using weights: {}'.format(args.weights))
