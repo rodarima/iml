@@ -1,4 +1,4 @@
-#from __future__ import print_function
+from __future__ import print_function
 from scipy.io import arff
 import numpy as np
 import matplotlib.pyplot as plt
@@ -24,8 +24,10 @@ parser.add_argument('-w', '--weights', action='store_true', default=False,
 	help='use weights (default: no)')
 parser.add_argument('-s', '--select', action='store_true', default=False,
 	help='use feature selection (default: no)')
+parser.add_argument('-sm', '--selectmodel', action='store_true', default=False,
+	help='use feature selection with SelectFromModel (default: no)')
 parser.add_argument('-t', '--time', action='store_true', default=False,
-	help='sort and filter results by time (default: no (sorted by correct %))')
+	help='sort and filter results by time (default: no (sorted by correct percent))')
 parser.add_argument("dataset",
 	help="Folder containing the dataset in folds")
 
@@ -139,7 +141,8 @@ def minMaxScale(x):
 	return (x - x.min()) / (x.max() - x.min())
 
 def knn(training_set, train_nominal, testing_instance, test_nominal,
-		conf, training_set_classes, gamma=1.1, use_weight=False, use_feature_selection=False):
+		conf, training_set_classes, gamma=1.1, use_weight=False, use_feature_selection=False,
+		 use_feature_selection_model=False):
 
 	k, select_name, distance_name = conf
 
@@ -156,13 +159,13 @@ def knn(training_set, train_nominal, testing_instance, test_nominal,
 		avg = np.sum(scores)/scores.shape[0]
 		training_set = training_set[:,np.where(scores> avg)[0]]
 		testing_instance = testing_instance[np.where(scores> avg)[0]]
-		##uncomment for SelectFromModel
-		#lsvc = LinearSVC(C=0.01, penalty="l1", dual=False).fit(
-		#	training_set, training_set_classes)
-		#model = SelectFromModel(lsvc, "median", prefit=True)
-		#otraining_set = training_set
-		#training_set = model.transform(training_set)
-		#testing_instance = testing_instance[np.isin(otraining_set, training_set)[0]]
+	if use_feature_selection_model:
+		lsvc = LinearSVC(C=0.01, penalty="l1", dual=False).fit(
+			training_set, training_set_classes)
+		model = SelectFromModel(lsvc, "median", prefit=True)
+		otraining_set = training_set
+		training_set = model.transform(training_set)
+		testing_instance = testing_instance[np.isin(otraining_set, training_set)[0]]
 
 		
 	distance_function = distance_functions[distance_name]
@@ -264,8 +267,8 @@ def main():
 
 				classified[j] = knn(train_block,
 					train_nominal_block, selected_point, selected_nominal, conf,
-					train_classes_block, args.weights,
-					args.select)
+					train_classes_block, 1.1, args.weights,
+					args.select, args.selectmodel)
 		
 			time2 = time.clock()
 
