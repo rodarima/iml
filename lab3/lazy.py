@@ -9,32 +9,25 @@ import scipy.spatial.distance
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import f_classif
 from tabulate import tabulate
+import sys, argparse, re
 
 np.random.seed(1)
 
-if len(sys.argv) != 2:
-	print("\nUsage: {} FILE.arff\n".format(sys.argv[0]))
-	exit(1)
+parser = argparse.ArgumentParser(
+	description='Fit a dataset using KNN lazy learning')
+	
+parser.add_argument('-w', '--weights', action='store_true', default=False,
+	help='use weights (dafault: no)')
+parser.add_argument('-s', '--select', action='store_true', default=False,
+	help='use feature selection (dafault: no)')
+parser.add_argument("dataset",
+	help="Folder containing the dataset in folds")
 
-#DATASET = "adult"
-DATASET = sys.argv[1]
-GRAPH = True
-ERROR = False
-N_FOLD = 10
-WEIGHT = False
-FEATURE = False
-#READ = True
+args = parser.parse_args()
 
-#bn = os.path.basename(DATASET)
-#img_fn = bn.replace('.arff', '.png')
-#img_path = 'fig/' + img_fn
 
-#print('Reading dataset: {}'.format(DATASET))
-
-def do_getData(dataset_path, dataset_name, i, data_type):
-	#dataset file style: PATH/DATASETNAME.fold.00000.train.arff
-	dataset = "{}/{}{}.{}.arff".format(dataset_path, dataset_name, i, data_type)
-	data, meta = arff.loadarff(dataset)
+def do_getData(dataset_fn):
+	data, meta = arff.loadarff(dataset_fn)
 
 	df = pd.DataFrame(data)
 	df.replace([np.inf, -np.inf], np.nan)
@@ -91,7 +84,7 @@ def vote_class(k_distances, k_classes):
 		ind = (k_classes == c)
 
 		# Each class vote with a value that increasses as close to the instance
-		weight[c] = np.sum(1 / (k_distances[ind] ** 2))
+		weight[c] = np.sum(1.0 / (k_distances[ind] ** 2.0))
 	
 	# Pick the class with the highest voted value
 	selected = max(weight, key=weight.get)
@@ -150,6 +143,7 @@ def knn(training_set, train_nominal, testing_instance, test_nominal,
 		#training_set += weights
 		training_set = minMaxScale(training_set) * weights
 		testing_instance = minMaxScale(testing_instance) * weights
+
 	if use_feature_selection:
 		scores = SelectKBest(f_classif, 'all').fit(
 			training_set,training_set_classes).scores_
@@ -177,90 +171,133 @@ def knn(training_set, train_nominal, testing_instance, test_nominal,
 	return selected_class
 
 
-#Fills training and test
-dataset_name = DATASET.split("/")[-1] + ".fold.00000"
-print(dataset_name)
-train = [0] * N_FOLD
-testing = [0] * N_FOLD
-train_nominal = [0] * N_FOLD
-testing_nominal = [0] * N_FOLD
-train_classes = [0] * N_FOLD
-testing_classes = [0] * N_FOLD
+def search_files(path):
+	train = []
+	test = []
+	for f in os.listdir(path):
+		m = re.match(r'.*\.fold\.([0-9]*)\..*\.arff', f)
+		if m == None: continue
 
-for i in range(N_FOLD):
-	train[i], train_nominal[i], train_classes[i] = do_getData(DATASET, dataset_name, i, 'train')
-	testing[i], testing_nominal[i], testing_classes[i] = do_getData(DATASET, dataset_name, i, 'test')
-
-conf_vals = np.meshgrid(
-	[1,3,5,7],
-	list(select_functions),
-	list(distance_functions))
-
-conf_combinations = np.array(conf_vals).T.reshape(-1,3)
-
-results = []
-
-for i in range(N_FOLD):
-	N_TEST = testing[i].shape[0]
-	N_TRAIN = train[i].shape[0]
-
-	train_block = train[i]
-	train_nominal_block = train_nominal[i]
-	test_block = testing[i]
-	test_nominal_block = testing_nominal[i]
-	train_classes_block = train_classes[i]
-	test_classes_block = testing_classes[i]
-
-	#For K we can use the sqr root of the number of samples, an make it odd to reduce the chance
-	#of a tie vote
-	#k = int(np.sqrt(N_TRAIN) // 2 * 2 + 1)
-	k = 3
-
-	classified = np.empty([N_TEST])
-	for c in range(conf_combinations.shape[0]):
-		conf = list(conf_combinations[c])
-		# Replace str k with integer value
-		conf[0] = int(conf[0])
-		for j in range(N_TEST):
-			selected_point = test_block[j]
-			selected_nominal = test_nominal_block[j]
-			expected_class = test_classes_block[j]
-
-			classified[j] = knn(train_block,
-				train_nominal_block, selected_point, selected_nominal, conf,
-				train_classes_block, use_weight=WEIGHT, use_feature_selection=FEATURE)
+		if f.endswith('test.arff'):
+			test.append(f)
+		elif f.endswith('train.arff'):
+			train.append(f)
+		else:
+			continue
 	
-		correct = (classified == test_classes_block)
-		percent = np.sum(correct)/N_TEST
+	train = sorted(train)
+	test = sorted(test)
 
-		conf.append(percent)
-		results.append([i] + conf)
-		print('fold={} {} {:.3f}'.format(i, conf, 100*percent))
+	ntrain = len(train)
+	ntest = len(test)
+	if ntrain != ntest:
+		print('The number of training and test datasets are not equal')
+		exit(1)
+
+	train = [os.path.join(path, f) for f in train]
+	test = [os.path.join(path, f) for f in test]
 	
-res = pd.DataFrame(results)
+	return (train, test)
 
-fn = DATASET + '/results.txt'
-res.to_csv(fn, header=False, index=False)
-print('Results saved in ' + fn)
-print()
+def main():
 
-means = np.zeros(conf_combinations.shape[0])
+	trainfiles, testfiles = search_files(args.dataset)
+	N_FOLD = len(trainfiles)
 
-for i in range(N_FOLD):
-	means += np.array(res[res[0] == i][4])
+	#Fills training and test
+	train = [0] * N_FOLD
+	testing = [0] * N_FOLD
+	train_nominal = [0] * N_FOLD
+	testing_nominal = [0] * N_FOLD
+	train_classes = [0] * N_FOLD
+	testing_classes = [0] * N_FOLD
 
-means /= N_FOLD
+	for i in range(N_FOLD):
+		train[i], train_nominal[i], train_classes[i] = do_getData(trainfiles[i])
+		testing[i], testing_nominal[i], testing_classes[i] = do_getData(testfiles[i])
 
-ind = np.argsort(-means)
+	conf_vals = np.meshgrid(
+		[1,3,5,7],
+		list(select_functions),
+		list(distance_functions))
 
-best_results = 10
-sorted_means = means[ind]
+	conf_combinations = np.array(conf_vals).T.reshape(-1,3)
 
-table = []
-headers = ['k', 'select', 'distance', 'mean %']
+	results = []
 
-for i in range(best_results):
-	table.append(list(conf_combinations[i]) + [sorted_means[i] * 100])
+	n_steps = conf_combinations.shape[0] * N_FOLD
 
-print('Dataset {}'.format(DATASET))
-print(tabulate(table, headers=headers, floatfmt='.2f'))
+	for i in range(N_FOLD):
+		N_TEST = testing[i].shape[0]
+		N_TRAIN = train[i].shape[0]
+
+		train_block = train[i]
+		train_nominal_block = train_nominal[i]
+		test_block = testing[i]
+		test_nominal_block = testing_nominal[i]
+		train_classes_block = train_classes[i]
+		test_classes_block = testing_classes[i]
+
+		classified = np.empty([N_TEST])
+		for c in range(conf_combinations.shape[0]):
+			conf = list(conf_combinations[c])
+			# Replace str k with integer value
+			conf[0] = int(conf[0])
+			for j in range(N_TEST):
+				selected_point = test_block[j]
+				selected_nominal = test_nominal_block[j]
+				expected_class = test_classes_block[j]
+
+				classified[j] = knn(train_block,
+					train_nominal_block, selected_point, selected_nominal, conf,
+					train_classes_block, use_weight=args.weights,
+					use_feature_selection=args.select)
+		
+			correct = (classified == test_classes_block)
+			percent = np.sum(correct)/float(N_TEST)
+
+			conf.append(percent)
+			results.append([i] + conf)
+
+			step = conf_combinations.shape[0] * i + c + 1
+			completed = float(step) / float(n_steps) * 100.0
+			#print('fold={} {} {:.3f}'.format(i, conf, 100.0*percent))
+			print('\r{:3.1f}%\tfold={}\tconf={}\033[K'.format(
+				completed, i, c),
+				end='', file=sys.stderr, flush=True)
+
+	print(file=sys.stderr, flush=True)
+	res = pd.DataFrame(results)
+
+	#fn = args.dataset + '/results.txt'
+	#res.to_csv(fn, header=False, index=False)
+	#print('Results saved in ' + fn)
+	#print()
+
+	means = np.zeros(conf_combinations.shape[0])
+
+	for i in range(N_FOLD):
+		means += np.array(res[res[0] == i][4])
+
+	means /= float(N_FOLD)
+
+	ind = np.argsort(-means)
+
+	best_results = 10
+	sorted_means = means[ind]
+
+	table = []
+	headers = ['k', 'select', 'distance', 'mean %']
+
+	for i in range(best_results):
+		table.append(list(conf_combinations[i]) + [sorted_means[i] * 100.0])
+
+	print('Dataset: {}'.format(args.dataset))
+	print('Using weights: {}'.format(args.weights))
+	print('Using feature selection: {}'.format(args.select))
+	print()
+	print(tabulate(table, headers=headers, floatfmt='.2f'))
+	print()
+
+if __name__ == '__main__':
+	main()

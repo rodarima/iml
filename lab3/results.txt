@@ -1,0 +1,102 @@
+Dataset: data/autos
+Using weights: False
+Using feature selection: False
+
+  k  select           distance      mean %
+---  ---------------  ----------  --------
+  1  most_common      cosine         96.36
+  1  weighted_voting  cosine         95.06
+  3  most_common      cosine         91.70
+  3  weighted_voting  cosine         91.50
+  5  most_common      cosine         91.44
+  5  weighted_voting  cosine         91.28
+  7  most_common      cosine         91.16
+  7  weighted_voting  cosine         91.00
+  1  most_common      manhattan      91.00
+  1  weighted_voting  manhattan      90.81
+
+Dataset: data/autos
+Using weights: True
+Using feature selection: False
+
+  k  select           distance      mean %
+---  ---------------  ----------  --------
+  1  most_common      cosine         96.98
+  1  weighted_voting  cosine         95.77
+  3  most_common      cosine         93.84
+  3  weighted_voting  cosine         93.25
+  5  most_common      cosine         93.25
+  5  weighted_voting  cosine         91.95
+  7  most_common      cosine         91.95
+  7  weighted_voting  cosine         91.73
+  1  most_common      manhattan      91.40
+  1  weighted_voting  manhattan      91.21
+
+Dataset: data/autos
+Using weights: True
+Using feature selection: True
+
+  k  select           distance      mean %
+---  ---------------  ----------  --------
+  1  most_common      cosine         96.27
+  1  weighted_voting  cosine         95.06
+  3  most_common      cosine         94.47
+  3  weighted_voting  cosine         93.75
+  5  most_common      cosine         93.75
+  5  weighted_voting  cosine         93.22
+  7  most_common      cosine         93.22
+  7  weighted_voting  cosine         92.89
+  1  most_common      manhattan      92.33
+  1  weighted_voting  manhattan      91.33
+
+Dataset: data/hepatitis
+Using weights: False
+Using feature selection: False
+
+  k  select           distance      mean %
+---  ---------------  ----------  --------
+  1  most_common      cosine         94.96
+  1  weighted_voting  cosine         93.85
+  3  most_common      cosine         92.74
+  3  weighted_voting  cosine         92.42
+  5  most_common      cosine         91.51
+  5  weighted_voting  cosine         91.51
+  7  most_common      cosine         91.31
+  7  weighted_voting  cosine         91.31
+  1  most_common      manhattan      91.31
+  1  weighted_voting  manhattan      91.31
+
+Dataset: data/hepatitis
+Using weights: True
+Using feature selection: False
+
+  k  select           distance      mean %
+---  ---------------  ----------  --------
+  1  most_common      cosine         93.85
+  1  weighted_voting  cosine         93.85
+  3  most_common      cosine         93.85
+  3  weighted_voting  cosine         93.85
+  5  most_common      cosine         93.85
+  5  weighted_voting  cosine         93.85
+  7  most_common      cosine         92.60
+  7  weighted_voting  cosine         92.60
+  1  most_common      manhattan      92.42
+  1  weighted_voting  manhattan      92.42
+
+Dataset: data/hepatitis
+Using weights: True
+Using feature selection: True
+
+  k  select           distance      mean %
+---  ---------------  ----------  --------
+  1  most_common      cosine         94.96
+  1  weighted_voting  cosine         93.85
+  3  most_common      cosine         93.71
+  3  weighted_voting  cosine         92.96
+  5  most_common      cosine         92.74
+  5  weighted_voting  cosine         92.60
+  7  most_common      cosine         92.60
+  7  weighted_voting  cosine         92.60
+  1  most_common      manhattan      91.49
+  1  weighted_voting  manhattan      91.49
+
