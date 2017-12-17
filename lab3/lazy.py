@@ -1,4 +1,4 @@
-from __future__ import print_function
+#from __future__ import print_function
 from scipy.io import arff
 import numpy as np
 import matplotlib.pyplot as plt
@@ -9,6 +9,8 @@ import sys, os.path
 import scipy.spatial.distance
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import f_classif
+from sklearn.svm import LinearSVC
+from sklearn.feature_selection import SelectFromModel
 from tabulate import tabulate
 import time
 import sys, argparse, re
@@ -154,6 +156,13 @@ def knn(training_set, train_nominal, testing_instance, test_nominal,
 		avg = np.sum(scores)/scores.shape[0]
 		training_set = training_set[:,np.where(scores> avg)[0]]
 		testing_instance = testing_instance[np.where(scores> avg)[0]]
+		##uncomment for SelectFromModel
+		#lsvc = LinearSVC(C=0.01, penalty="l1", dual=False).fit(
+		#	training_set, training_set_classes)
+		#model = SelectFromModel(lsvc, "median", prefit=True)
+		#otraining_set = training_set
+		#training_set = model.transform(training_set)
+		#testing_instance = testing_instance[np.isin(otraining_set, training_set)[0]]
 
 		
 	distance_function = distance_functions[distance_name]
@@ -255,8 +264,8 @@ def main():
 
 				classified[j] = knn(train_block,
 					train_nominal_block, selected_point, selected_nominal, conf,
-					train_classes_block, use_weight=False,
-					use_feature_selection=False)
+					train_classes_block, args.weights,
+					args.select)
 		
 			time2 = time.clock()
 
@@ -290,6 +299,7 @@ def main():
 		times += np.array(res[res[0] == i][5])
 
 	means /= float(N_FOLD)
+	times /= float(N_FOLD)
 
 	#sorting by accuracy:
 	if args.time: 
@@ -306,14 +316,16 @@ def main():
 		sorted_times = times[ind]
 
 	table = []
-	headers = ['k', 'select', 'distance', 'mean %', 'time']
+	headers = ['k', 'select', 'distance', 'mean %', 'time ms']
 
 	for i in range(best_results):
+		#table.append(list(conf_combinations[i]) + [sorted_means[i] * 100.0] + [times[i]])
 		table.append(list(conf_combinations[i]) + [sorted_means[i] * 100.0] + [times[i]])
 
 	print('Dataset: {}'.format(args.dataset))
 	print('Using weights: {}'.format(args.weights))
 	print('Using feature selection: {}'.format(args.select))
+	print('Sorting by time: {}'.format(args.time))
 	print()
 	print(tabulate(table, headers=headers, floatfmt='.2f'))
 	print()
