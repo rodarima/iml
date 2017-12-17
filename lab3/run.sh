@@ -15,4 +15,6 @@ for d in $DATASETS; do
 	python lazy.py -w $DATAPATH >> results.txt
 	# With weight and selection
 	python lazy.py -w -s $DATAPATH >> results.txt
+	# With weight and selection with SelectFromModel
+	python lazy.py -w -sm $DATAPATH >> results.txt
 done

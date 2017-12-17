@@ -1,102 +1,144 @@
 Dataset: data/autos
 Using weights: False
 Using feature selection: False
+Sorting by time: False
 
-  k  select           distance      mean %
----  ---------------  ----------  --------
-  1  most_common      cosine         96.36
-  1  weighted_voting  cosine         95.06
-  3  most_common      cosine         91.70
-  3  weighted_voting  cosine         91.50
-  5  most_common      cosine         91.44
-  5  weighted_voting  cosine         91.28
-  7  most_common      cosine         91.16
-  7  weighted_voting  cosine         91.00
-  1  most_common      manhattan      91.00
-  1  weighted_voting  manhattan      90.81
+  k  select           distance      mean %    time ms
+---  ---------------  ----------  --------  ---------
+  1  most_common      euclidean      96.36      24.28
+  1  weighted_voting  euclidean      95.06      27.45
+  3  most_common      euclidean      91.70      29.41
+  3  weighted_voting  euclidean      91.50      30.53
+  5  most_common      euclidean      91.44      27.21
+  5  weighted_voting  euclidean      91.28      31.08
+  7  most_common      euclidean      91.16      31.22
+  7  weighted_voting  euclidean      91.00      26.66
+  1  most_common      cosine         91.00     191.63
+  1  weighted_voting  cosine         90.81     210.10
 
 Dataset: data/autos
 Using weights: True
 Using feature selection: False
+Sorting by time: False
 
-  k  select           distance      mean %
----  ---------------  ----------  --------
-  1  most_common      cosine         96.98
-  1  weighted_voting  cosine         95.77
-  3  most_common      cosine         93.84
-  3  weighted_voting  cosine         93.25
-  5  most_common      cosine         93.25
-  5  weighted_voting  cosine         91.95
-  7  most_common      cosine         91.95
-  7  weighted_voting  cosine         91.73
-  1  most_common      manhattan      91.40
-  1  weighted_voting  manhattan      91.21
+  k  select           distance      mean %    time ms
+---  ---------------  ----------  --------  ---------
+  1  most_common      euclidean      96.98      39.29
+  1  weighted_voting  euclidean      95.77      43.81
+  3  most_common      euclidean      93.84      48.21
+  3  weighted_voting  euclidean      93.25      45.34
+  5  most_common      euclidean      93.25      43.58
+  5  weighted_voting  euclidean      91.95      42.24
+  7  most_common      euclidean      91.95      44.76
+  7  weighted_voting  euclidean      91.73      45.08
+  1  most_common      cosine         91.40     207.76
+  1  weighted_voting  cosine         91.21     218.79
 
 Dataset: data/autos
 Using weights: True
 Using feature selection: True
+Sorting by time: False
 
-  k  select           distance      mean %
----  ---------------  ----------  --------
-  1  most_common      cosine         96.27
-  1  weighted_voting  cosine         95.06
-  3  most_common      cosine         94.47
-  3  weighted_voting  cosine         93.75
-  5  most_common      cosine         93.75
-  5  weighted_voting  cosine         93.22
-  7  most_common      cosine         93.22
-  7  weighted_voting  cosine         92.89
-  1  most_common      manhattan      92.33
-  1  weighted_voting  manhattan      91.33
+  k  select           distance      mean %    time ms
+---  ---------------  ----------  --------  ---------
+  1  most_common      euclidean      96.27      57.06
+  1  weighted_voting  euclidean      95.06      56.28
+  3  most_common      euclidean      94.47      55.38
+  3  weighted_voting  euclidean      93.75      57.62
+  5  most_common      euclidean      93.75      57.91
+  5  weighted_voting  euclidean      93.22      61.32
+  7  most_common      euclidean      93.22      60.11
+  7  weighted_voting  euclidean      92.89      62.61
+  1  most_common      cosine         92.33     244.23
+  1  weighted_voting  cosine         91.33     239.47
+
+Dataset: data/autos
+Using weights: True
+Using feature selection: False
+Sorting by time: False
+
+  k  select           distance      mean %    time ms
+---  ---------------  ----------  --------  ---------
+  1  most_common      euclidean      96.98     117.23
+  1  weighted_voting  euclidean      95.77     116.60
+  3  most_common      euclidean      93.84     117.83
+  3  weighted_voting  euclidean      93.25     117.32
+  5  most_common      euclidean      93.25     112.46
+  5  weighted_voting  euclidean      91.95     113.57
+  7  most_common      euclidean      91.95     113.24
+  7  weighted_voting  euclidean      91.73     111.80
+  1  most_common      cosine         91.40     296.20
+  1  weighted_voting  cosine         91.21     293.89
 
 Dataset: data/hepatitis
 Using weights: False
 Using feature selection: False
+Sorting by time: False
 
-  k  select           distance      mean %
----  ---------------  ----------  --------
-  1  most_common      cosine         94.96
-  1  weighted_voting  cosine         93.85
-  3  most_common      cosine         92.74
-  3  weighted_voting  cosine         92.42
-  5  most_common      cosine         91.51
-  5  weighted_voting  cosine         91.51
-  7  most_common      cosine         91.31
-  7  weighted_voting  cosine         91.31
-  1  most_common      manhattan      91.31
-  1  weighted_voting  manhattan      91.31
+  k  select           distance      mean %    time ms
+---  ---------------  ----------  --------  ---------
+  1  most_common      euclidean      94.96       7.67
+  1  weighted_voting  euclidean      93.85       7.86
+  3  most_common      euclidean      92.74       7.59
+  3  weighted_voting  euclidean      92.42       8.09
+  5  most_common      euclidean      91.51       7.53
+  5  weighted_voting  euclidean      91.51       7.83
+  7  most_common      euclidean      91.31       7.56
+  7  weighted_voting  euclidean      91.31       8.50
+  1  most_common      cosine         91.31      50.72
+  1  weighted_voting  cosine         91.31      50.69
 
 Dataset: data/hepatitis
 Using weights: True
 Using feature selection: False
+Sorting by time: False
 
-  k  select           distance      mean %
----  ---------------  ----------  --------
-  1  most_common      cosine         93.85
-  1  weighted_voting  cosine         93.85
-  3  most_common      cosine         93.85
-  3  weighted_voting  cosine         93.85
-  5  most_common      cosine         93.85
-  5  weighted_voting  cosine         93.85
-  7  most_common      cosine         92.60
-  7  weighted_voting  cosine         92.60
-  1  most_common      manhattan      92.42
-  1  weighted_voting  manhattan      92.42
+  k  select           distance      mean %    time ms
+---  ---------------  ----------  --------  ---------
+  1  most_common      euclidean      93.85      12.67
+  1  weighted_voting  euclidean      93.85      13.28
+  3  most_common      euclidean      93.85      12.14
+  3  weighted_voting  euclidean      93.85      13.08
+  5  most_common      euclidean      93.85      13.27
+  5  weighted_voting  euclidean      93.85      12.29
+  7  most_common      euclidean      92.60      11.72
+  7  weighted_voting  euclidean      92.60      13.59
+  1  most_common      cosine         92.42      55.29
+  1  weighted_voting  cosine         92.42      54.68
 
 Dataset: data/hepatitis
 Using weights: True
 Using feature selection: True
+Sorting by time: False
 
-  k  select           distance      mean %
----  ---------------  ----------  --------
-  1  most_common      cosine         94.96
-  1  weighted_voting  cosine         93.85
-  3  most_common      cosine         93.71
-  3  weighted_voting  cosine         92.96
-  5  most_common      cosine         92.74
-  5  weighted_voting  cosine         92.60
-  7  most_common      cosine         92.60
-  7  weighted_voting  cosine         92.60
-  1  most_common      manhattan      91.49
-  1  weighted_voting  manhattan      91.49
+  k  select           distance      mean %    time ms
+---  ---------------  ----------  --------  ---------
+  1  most_common      euclidean      94.96      18.14
+  1  weighted_voting  euclidean      93.85      19.42
+  3  most_common      euclidean      93.71      17.20
+  3  weighted_voting  euclidean      92.96      17.17
+  5  most_common      euclidean      92.74      16.58
+  5  weighted_voting  euclidean      92.60      17.40
+  7  most_common      euclidean      92.60      16.64
+  7  weighted_voting  euclidean      92.60      16.78
+  1  most_common      cosine         91.49      66.14
+  1  weighted_voting  cosine         91.49      63.06
+
+Dataset: data/hepatitis
+Using weights: True
+Using feature selection: False
+Sorting by time: False
+
+  k  select           distance      mean %    time ms
+---  ---------------  ----------  --------  ---------
+  1  most_common      euclidean      93.85      18.16
+  1  weighted_voting  euclidean      93.85      18.77
+  3  most_common      euclidean      93.85      18.83
+  3  weighted_voting  euclidean      93.85      21.35
+  5  most_common      euclidean      93.85      20.26
+  5  weighted_voting  euclidean      93.85      18.77
+  7  most_common      euclidean      92.60      19.54
+  7  weighted_voting  euclidean      92.60      19.14
+  1  most_common      cosine         92.42      66.17
+  1  weighted_voting  cosine         92.42      72.54
 
