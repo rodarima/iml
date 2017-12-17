@@ -1,0 +1,50 @@
+%
+% GALE automatic stratified fold generation for CV
+%
+% Generated at        : Wed Feb 21 23:57:18 CET 2001
+% Random seed         : 69
+% File name           : GALE.hepatitis.cv.seed.69.fold.000005.test.arff
+% Number of instances : 17
+%
+
+@RELATION hepatitis
+
+@ATTRIBUTE	AGE	INTEGER [10,80]
+@ATTRIBUTE	SEX	{male,female}
+@ATTRIBUTE	STEROID	{no,yes}
+@ATTRIBUTE	ANTIVIRALS	{no,yes}
+@ATTRIBUTE	FATIGUE	{no,yes}
+@ATTRIBUTE	MALAISE	{no,yes}
+@ATTRIBUTE	ANOREXIA	{no,yes}
+@ATTRIBUTE	LIVER_BIG	{no,yes}
+@ATTRIBUTE	LIVER_FIRM	{no,yes}
+@ATTRIBUTE	SPLEEN_PALPABLE	{no,yes}
+@ATTRIBUTE	SPIDERS	{no,yes}
+@ATTRIBUTE	ASCITES	{no,yes}
+@ATTRIBUTE	VARICES	{no,yes}
+@ATTRIBUTE	BILIRUBIN	REAL
+@ATTRIBUTE	ALK_PHOSPHATE	INTEGER [33,250]
+@ATTRIBUTE	SGOT	INTEGER [13,500]
+@ATTRIBUTE	ALBUMIN	REAL
+@ATTRIBUTE	PROTIME	INTEGER [10,90]
+@ATTRIBUTE	HISTOLOGY	{no,yes}
+@ATTRIBUTE	Class	{DIE,LIVE}
+
+@DATA
+27,female,no,no,yes,no,no,yes,yes,no,no,no,no,2.4,168,227,3.0,66,yes,LIVE
+22,female,yes,no,no,no,no,yes,no,no,no,no,no,0.7,?,24,?,?,yes,LIVE
+52,female,no,no,yes,no,no,yes,no,no,no,no,no,1.0,85,30,4.0,?,yes,LIVE
+34,female,yes,no,no,no,no,yes,no,no,no,no,no,1.0,?,200,4.0,?,no,LIVE
+28,female,no,no,yes,yes,yes,yes,yes,no,no,no,no,1.6,44,123,4.0,46,no,LIVE
+32,female,yes,no,yes,yes,yes,yes,no,no,yes,no,yes,3.5,215,54,3.4,29,no,LIVE
+38,female,no,no,yes,yes,yes,yes,no,no,no,yes,no,2.0,72,89,2.9,46,no,LIVE
+25,female,yes,no,no,no,no,yes,no,no,no,no,no,0.6,?,34,6.4,?,yes,LIVE
+59,female,no,no,yes,yes,no,yes,yes,yes,yes,no,no,1.5,107,157,3.6,38,yes,DIE
+30,female,no,no,no,no,no,yes,no,no,no,no,no,0.7,100,31,4.0,100,no,LIVE
+36,female,yes,no,no,no,no,yes,no,no,no,no,no,0.6,120,30,4.0,?,yes,LIVE
+36,female,no,no,yes,yes,yes,no,yes,no,yes,no,yes,1.7,295,60,2.7,?,yes,LIVE
+62,female,no,no,yes,yes,no,?,?,no,no,no,no,1.0,?,60,?,?,no,DIE
+72,female,yes,yes,yes,no,no,yes,yes,no,no,no,no,1.0,115,52,3.4,50,yes,LIVE
+51,female,yes,no,no,no,no,no,yes,no,yes,no,no,0.8,?,33,4.5,?,yes,LIVE
+49,female,no,no,yes,yes,no,yes,no,yes,yes,no,no,1.4,85,70,3.5,35,yes,DIE
+36,female,no,no,no,no,no,yes,no,yes,no,no,no,0.8,85,44,4.2,85,no,LIVE

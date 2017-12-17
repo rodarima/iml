@@ -1,0 +1,48 @@
+%
+% GALE automatic stratified fold generation for CV
+%
+% Generated at        : Wed Feb 21 23:57:18 CET 2001
+% Random seed         : 69
+% File name           : GALE.hepatitis.cv.seed.69.fold.000007.test.arff
+% Number of instances : 15
+%
+
+@RELATION hepatitis
+
+@ATTRIBUTE	AGE	INTEGER [10,80]
+@ATTRIBUTE	SEX	{male,female}
+@ATTRIBUTE	STEROID	{no,yes}
+@ATTRIBUTE	ANTIVIRALS	{no,yes}
+@ATTRIBUTE	FATIGUE	{no,yes}
+@ATTRIBUTE	MALAISE	{no,yes}
+@ATTRIBUTE	ANOREXIA	{no,yes}
+@ATTRIBUTE	LIVER_BIG	{no,yes}
+@ATTRIBUTE	LIVER_FIRM	{no,yes}
+@ATTRIBUTE	SPLEEN_PALPABLE	{no,yes}
+@ATTRIBUTE	SPIDERS	{no,yes}
+@ATTRIBUTE	ASCITES	{no,yes}
+@ATTRIBUTE	VARICES	{no,yes}
+@ATTRIBUTE	BILIRUBIN	REAL
+@ATTRIBUTE	ALK_PHOSPHATE	INTEGER [33,250]
+@ATTRIBUTE	SGOT	INTEGER [13,500]
+@ATTRIBUTE	ALBUMIN	REAL
+@ATTRIBUTE	PROTIME	INTEGER [10,90]
+@ATTRIBUTE	HISTOLOGY	{no,yes}
+@ATTRIBUTE	Class	{DIE,LIVE}
+
+@DATA
+54,female,yes,no,no,no,no,yes,no,no,no,no,no,1.0,85,30,4.5,0,yes,LIVE
+45,female,no,no,yes,yes,yes,yes,no,no,no,no,no,2.3,?,648,?,?,yes,LIVE
+69,male,yes,no,yes,no,no,yes,no,no,no,no,no,3.2,119,136,?,?,yes,LIVE
+44,female,no,no,yes,yes,no,yes,no,no,no,no,no,1.6,68,68,3.7,?,no,LIVE
+36,female,no,no,no,no,no,yes,no,no,no,no,no,1.1,141,75,3.3,?,yes,LIVE
+27,female,yes,no,yes,yes,yes,no,yes,yes,yes,no,no,1.2,133,98,4.1,39,no,LIVE
+47,female,yes,no,yes,yes,no,yes,yes,no,yes,yes,yes,1.0,166,30,2.6,31,yes,DIE
+51,female,no,no,yes,no,yes,yes,no,yes,yes,no,no,?,?,?,?,?,no,DIE
+41,male,yes,yes,yes,yes,yes,yes,no,no,no,no,no,0.7,81,53,5.0,74,no,LIVE
+64,female,yes,yes,yes,yes,no,no,yes,no,no,no,no,1.0,80,38,4.3,74,no,LIVE
+37,female,yes,no,yes,no,no,yes,no,no,yes,no,no,0.6,67,28,4.2,?,no,DIE
+31,female,no,no,yes,no,no,yes,no,no,no,no,no,1.2,75,173,4.2,54,yes,LIVE
+30,female,yes,yes,no,no,no,yes,no,no,no,no,no,0.7,52,38,3.9,52,no,LIVE
+30,female,no,no,yes,yes,no,yes,yes,no,yes,no,no,0.8,147,128,3.9,100,yes,LIVE
+44,female,yes,no,no,no,no,yes,no,no,no,no,no,0.6,110,145,4.4,70,no,LIVE
