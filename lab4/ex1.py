@@ -74,6 +74,10 @@ def split_test(X1, y1, X2, y2):
 def svm(gen, name, C=1.0, kernel='linear'):
 
 	X1, y1, X2, y2 = gen()
+
+	# FIXME: Generator 2 is behaving wrongly, should we shuffle X1 anf X2
+	# before splitting? Mail sent, waiting for Maria's confirmation.
+
 	X_train, y_train = split_train(X1, y1, X2, y2)
 	X_test, y_test = split_test(X1, y1, X2, y2)
 
