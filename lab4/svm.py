@@ -146,8 +146,7 @@ def run3():
 	y = np.concatenate((y1, y2), axis=0)
 	C = 1.0
 
-	# TODO: Replace linear kernel by Gaussian
-	svm = SVC(C=C, kernel='linear')
+	svm = SVC(C=C, kernel='rbf')
 	svm.fit(X_train, y_train)
 	y_pred = svm.predict(X_test)
 	correct = np.sum(y_pred == y_test)
