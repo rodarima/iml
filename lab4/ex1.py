@@ -5,6 +5,8 @@ from sklearn.svm import SVC
 #import cvxopt.solvers
 #import pylab as pl
 
+# For plotting the decision regions
+from mlxtend.plotting import plot_decision_regions
 
 def gen1():
 	# generate training data in the 2-d case
@@ -14,9 +16,9 @@ def gen1():
 	cov = np.array([[0.8, 0.6], [0.6, 0.8]])
 
 	X1 = np.random.multivariate_normal(mean1, cov, n)
-	y1 = np.ones(n)
+	y1 = np.ones(n, dtype='int')
 	X2 = np.random.multivariate_normal(mean2, cov, n)
-	y2 = -np.ones(n)
+	y2 = -np.ones(n, dtype='int')
 
 	return X1, y1, X2, y2
 
@@ -30,10 +32,10 @@ def gen2():
 
 	X1 = np.random.multivariate_normal(mean1, cov, n)
 	X1 = np.vstack((X1, np.random.multivariate_normal(mean3, cov, n)))
-	y1 = np.ones(X1.shape[0])
+	y1 = np.ones(X1.shape[0], dtype='int')
 	X2 = np.random.multivariate_normal(mean2, cov, n)
 	X2 = np.vstack((X2, np.random.multivariate_normal(mean4, cov, n)))
-	y2 = -np.ones(X2.shape[0])
+	y2 = -np.ones(X2.shape[0], dtype='int')
 
 	return X1, y1, X2, y2
 
@@ -45,9 +47,9 @@ def gen3():
 	cov = np.array([[1.5, 1.0], [1.0, 1.5]])
 
 	X1 = np.random.multivariate_normal(mean1, cov, n)
-	y1 = np.ones(n)
+	y1 = np.ones(n, dtype='int')
 	X2 = np.random.multivariate_normal(mean2, cov, n)
-	y2 = -np.ones(n)
+	y2 = -np.ones(n, dtype='int')
 
 	return X1, y1, X2, y2
 
@@ -69,97 +71,37 @@ def split_test(X1, y1, X2, y2):
 	y_test = np.hstack((y1_test, y2_test))
 	return X_test, y_test
 
-def run1():
+def svm(gen, name, C=1.0, kernel='linear'):
 
-	X1, y1, X2, y2 = gen1()
+	X1, y1, X2, y2 = gen()
 	X_train, y_train = split_train(X1, y1, X2, y2)
 	X_test, y_test = split_test(X1, y1, X2, y2)
-
-	# - Write here your SVM code and choose a linear kernel.
-	# - Plot the graph with the support_vectors_.
-	# - Print on the console the number of correct predictions and the total of
-	# predictions
 
 	X = np.concatenate((X1, X2), axis=0)
 	y = np.concatenate((y1, y2), axis=0)
 
-	svm = SVC(kernel='linear')
+	svm = SVC(C=C, kernel=kernel)
 	svm.fit(X_train, y_train)
 	y_pred = svm.predict(X_test)
 	correct = np.sum(y_pred == y_test)
 	total = y_test.shape[0]
 
-	print('dataset 1: Correct classified {}/{}'.format(correct, total))
+	print('dataset {}: Correct classified {}/{}'.format(
+		name, correct, total, kernel))
 
 	sv = svm.support_vectors_
 
-	plt.scatter(X[:,0], X[:,1], c=y)
-	plt.scatter(sv[:,0], sv[:,1], c='red', marker='.')
-	#plt.show()
-	plt.savefig('fig/1.png')
-	plt.close()
+	plot_decision_regions(X_train, y_train, clf=svm,
+		X_highlight=sv, hide_spines=False, markers='o')
 
-def run2():
+	plt.scatter(X_test[:,0], X_test[:,1], c=y_test, marker='x', label='test')
 
-	X1, y1, X2, y2 = gen2()
-	X_train, y_train = split_train(X1, y1, X2, y2)
-	X_test, y_test = split_test(X1, y1, X2, y2)
+	plt.title('Generator {}. Correct classified {}/{}, kernel={}'.format(
+		name, correct, total, kernel))
 
-	# - Write here your SVM code and choose a linear kernel with the best C
-	# parameter
-	# - Plot the graph with the support_vectors_
-	# - Print on the console the number of correct predictions and the total of
-	# predictions
-
-	X = np.concatenate((X1, X2), axis=0)
-	y = np.concatenate((y1, y2), axis=0)
-	C = 1.0
-
-	svm = SVC(C=C, kernel='linear')
-	svm.fit(X_train, y_train)
-	y_pred = svm.predict(X_test)
-	correct = np.sum(y_pred == y_test)
-	total = y_test.shape[0]
-
-	print('dataset 2: Correct classified {}/{}'.format(correct, total))
-
-	sv = svm.support_vectors_
-
-	plt.scatter(X[:,0], X[:,1], c=y)
-	plt.scatter(sv[:,0], sv[:,1], c='red', marker='.')
-	#plt.show()
-	plt.savefig('fig/2.png')
-	plt.close()
-
-def run3():
-
-	X1, y1, X2, y2 = gen3()
-	X_train, y_train = split_train(X1, y1, X2, y2)
-	X_test, y_test = split_test(X1, y1, X2, y2)
-
-	# - Write here your SVM code and use a gaussian kernel
-	# - Plot the graph with the support_vectors_
-	# - Print on the console the number of correct predictions and the total of
-	# predictions
-
-	X = np.concatenate((X1, X2), axis=0)
-	y = np.concatenate((y1, y2), axis=0)
-	C = 1.0
-
-	svm = SVC(C=C, kernel='rbf')
-	svm.fit(X_train, y_train)
-	y_pred = svm.predict(X_test)
-	correct = np.sum(y_pred == y_test)
-	total = y_test.shape[0]
-
-	print('dataset 3: Correct classified {}/{}'.format(correct, total))
-
-	sv = svm.support_vectors_
-
-	plt.scatter(X[:,0], X[:,1], c=y)
-	plt.scatter(sv[:,0], sv[:,1], c='red', marker='.')
-	#plt.show()
-	plt.savefig('fig/3.png')
+	plt.legend()
+	plt.tight_layout()
+	plt.savefig('fig/ex1/{}.pdf'.format(name))
 	plt.close()
 
 if __name__ == "__main__":
@@ -167,7 +109,23 @@ if __name__ == "__main__":
 	# Reproducible runs
 	np.random.seed(1)
 
-	# Execute SVM with these datasets
-	run1()
-	run2()
-	run3()
+	# Execute SVM with the three generators
+
+	# - Write here your SVM code and choose a linear kernel.
+	# - Plot the graph with the support_vectors_.
+	# - Print on the console the number of correct predictions and the total of
+	# predictions
+	svm(gen1, '1')
+
+	# - Write here your SVM code and choose a linear kernel with the best C
+	# parameter
+	# - Plot the graph with the support_vectors_
+	# - Print on the console the number of correct predictions and the total of
+	# predictions
+	svm(gen2, '2', C=1.0)
+
+	# - Write here your SVM code and use a gaussian kernel
+	# - Plot the graph with the support_vectors_
+	# - Print on the console the number of correct predictions and the total of
+	# predictions
+	svm(gen3, '3', kernel='rbf')
