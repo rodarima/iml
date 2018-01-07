@@ -44,23 +44,43 @@ the behavior of the classifier.
 % functions analyzed and justify which is the best option for each one of them,
 % taking into account that each data set has a different linear distribution.
 %
+
+We see that the datasets 1 and 3 are linearly separable, so a linear function 
+should be used. The Gaussian kernel is used in the latter, but is behaving 
+similarly to a linear kernel, so the classification is correct. The dataset 2, 
+in contrast, is clearly not linearly separable, so a linear function should not 
+be used. In the figure~\ref{fig:ex1gen2a} a Gaussian kernel was used, to see the 
+difference. We see a better classification as expected.
+
+The figure~\ref{fig:ex1gen2} shows a correct classification of 100\%, even if 
+the classifier is not accurate. That can be explained because the test set 
+provided with the generator, is only choosing elements that are placed in the 
+outermost groups.
+%
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.6\textwidth]{ex1/1.pdf}
+	\includegraphics[width=0.7\textwidth]{ex1/1.pdf}
 	\caption{Dataset of the generator 1}
 	\label{fig:ex1gen1}
 \end{figure}
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.6\textwidth]{ex1/2.pdf}
+	\includegraphics[width=0.7\textwidth]{ex1/2.pdf}
 	\caption{Dataset of the generator 2}
 	\label{fig:ex1gen2}
 \end{figure}
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.6\textwidth]{ex1/3.pdf}
+	\includegraphics[width=0.7\textwidth]{ex1/3.pdf}
 	\caption{Dataset of the generator 3}
 	\label{fig:ex1gen3}
 \end{figure}
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.7\textwidth]{ex1/2a.pdf}
+	\caption{Dataset of the generator 2 using a Gaussian kernel}
+	\label{fig:ex1gen2a}
+\end{figure}
 %
+
 \end{document}

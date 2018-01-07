@@ -127,6 +127,7 @@ if __name__ == "__main__":
 	# - Print on the console the number of correct predictions and the total of
 	# predictions
 	svm(gen2, '2', C=1.0)
+	svm(gen2, '2a', C=1.0, kernel='rbf')
 
 	# - Write here your SVM code and use a gaussian kernel
 	# - Plot the graph with the support_vectors_
