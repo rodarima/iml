@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import os.path
-import re
+import re, time
 import itertools
 from sklearn.svm import SVC
 from sklearn import preprocessing
@@ -20,7 +20,7 @@ configuration_info = (
 
 configurations = list(itertools.product(*configuration_info))
 
-def read_arff(dataset_fn):
+def read_arff(dataset_fn, scale=True):
 	#print('Reading arff {}'.format(dataset_fn))
 	data, meta = arff.loadarff(dataset_fn)
 
@@ -50,7 +50,8 @@ def read_arff(dataset_fn):
 	# shape=(n_samples, n_features)
 	X = df[numerical_columns].as_matrix()
 
-	X = preprocessing.scale(X)
+	if scale:
+		X = preprocessing.scale(X)
 
 	return {'numeric':X, 'nominal':Xn, 'class':y}
 
@@ -78,7 +79,9 @@ def svm_classify(name, num_fold, train, test, C=1.0, kernel='linear'):
 	X_train, y_train = train['numeric'], train['class']
 	X_test, y_test = test['numeric'], test['class']
 
-	svm = SVC(C=C, kernel=kernel, cache_size=7000)
+	# XXX: Note yhay we allow up to 2048 MB of cache for the kernel function.
+	# Modify to fit your needs.
+	svm = SVC(C=C, kernel=kernel, cache_size=2048)
 
 	#print('Selecting kernel={} C={}'.format(kernel, C))
 	#print('Training {} fold {}, with {} rows and {} columns'.format(
@@ -100,11 +103,18 @@ def svm_classify(name, num_fold, train, test, C=1.0, kernel='linear'):
 def process_fold(name, num_fold, train, test):
 
 	scores = {}
+	times = {}
 
 	for kernel, C in configurations:
-		scores[(kernel, C)] = svm_classify(name, num_fold, train, test, C=C, kernel=kernel)
+		conf = (kernel, C)
 
-	return scores
+		tic = time.clock()
+		scores[conf] = svm_classify(name, num_fold, train, test, C=C, kernel=kernel)
+		t = time.clock() - tic
+
+		times[conf] = t
+
+	return scores, times
 
 def process_dataset(dataset):
 
@@ -112,6 +122,7 @@ def process_dataset(dataset):
 	folds = search_folds(dataset)
 
 	scores = {}
+	times = {}
 
 	for num_fold, fold in folds.items():
 
@@ -121,16 +132,33 @@ def process_dataset(dataset):
 		train = read_arff(train_fn)
 		test = read_arff(test_fn)
 
-		scores[num_fold] = process_fold(name, num_fold, train, test)
+		print('Processing fold {}'.format(num_fold))
+
+		scores[num_fold], times[num_fold] = process_fold(name, num_fold, train, test)
+
+
+	table = {}
 
 	for conf in configurations:
 		score_list = []
+		time_list = []
 		for num_fold, results in scores.items():
 			score_list.append(results[conf])
+		for num_fold, results in times.items():
+			time_list.append(results[conf])
 
 		score = np.mean(score_list)
-		print('dataset {} \tconf {} \tmean score: {}'.format(
-			name, conf, score))
+		t = np.mean(time_list)
+		table[conf] = {'score': score, 'time':t}
+		print('dataset {} \tconf {} \tscore {:.3f} \t time {:.3e}'.format(
+			name, conf, score, t))
+
+	best_conf = max(table, key=lambda c: table[c]['score'])
+	best_score = table[best_conf]['score']
+	best_t = table[best_conf]['time']
+
+	print('Best configuration {} with score {:.3f} and time {:.3e}'.format(best_conf,
+		best_score, best_t))
 
 	return scores
 
