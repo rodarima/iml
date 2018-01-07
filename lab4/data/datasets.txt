@@ -1,2 +1,2 @@
-../data/fold/autos
 ../data/fold/hepatitis
+../data/fold/satimage
