@@ -1,2 +1,2 @@
-../data/fold/hepatitis
-../data/fold/satimage
+data/hepatitis
+data/vowel
